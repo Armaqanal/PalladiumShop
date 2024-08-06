@@ -1,6 +1,7 @@
 django
 django-jalali
 django-jalali-date
+jalali_core
 pillow
 setuptools
 django-jsoneditor
