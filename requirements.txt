@@ -1,0 +1,6 @@
+django
+django-jalali
+django-jalali-date
+pillow
+setuptools
+django-jsoneditor
