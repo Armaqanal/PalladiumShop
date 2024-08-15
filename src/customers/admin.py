@@ -8,7 +8,7 @@ from django.contrib.auth.admin import UserAdmin
 
 class PalladiumUserAdmin(ModelAdminJalaliMixin, UserAdmin):
     list_display = ['username', 'email', 'phone', 'is_staff', 'is_superuser', 'get_date_joined_jalali',
-                    'get_date_modified_jalali']
+                    'get_date_modified_jalali','get_date_of_birth']
     list_filter = ['username', 'email']
     readonly_fields = ['last_login', 'get_date_joined_jalali', 'get_date_modified_jalali']
 
@@ -50,9 +50,11 @@ class PalladiumUserAdmin(ModelAdminJalaliMixin, UserAdmin):
     def get_date_modified_jalali(self, obj):
         return datetime2jalali(obj.date_modified).strftime('%a, %d %b %Y %H:%M:%S')
 
-    # @admin.display(description='تولد')
-    # def get_date_of_birth(self, obj):
-    #     return datetime2jalali(obj.date_of_birth).strftime("%Y/%m/%d")
+    @admin.display(description='تولد')
+    def get_date_of_birth(self, obj):
+        if obj.date_of_birth:
+            return datetime2jalali(obj.date_of_birth).strftime('%Y-%m-%d')
+        return "N/A"
 
 
 admin.site.register(User, PalladiumUserAdmin)
@@ -100,7 +102,9 @@ class CustomerAdmin(PalladiumUserAdmin):
 admin.site.register(Customer, CustomerAdmin)
 
 
-@admin.register(Address)
+
 class AddressAdmin(admin.ModelAdmin):
     list_display = ('zip_code', 'street', 'city', 'state')
     list_filter = ('city',)
+
+admin.site.register(Address, AddressAdmin)

@@ -4,7 +4,7 @@ from django.contrib.auth.base_user import BaseUserManager
 class UserManager(BaseUserManager):
     def create_user(self, password, username=None, email=None, phone=None, **extra_fields):
         if not (username or email or phone):
-            raise ValueError("A-Mirza says: Providing username, email or phone number is required.")
+            raise ValueError("Palladium says: Providing username, email or phone number is required.")
 
         email = self.normalize_email(email)
         user = self.model(username=username, email=email, phone=phone, **extra_fields)

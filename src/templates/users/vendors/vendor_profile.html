@@ -1,0 +1,215 @@
+{% extends 'website/base.html' %}
+{% load static %}
+
+{% block header %}
+    <!-- Include only the top bar from the header -->
+    <div class="container-menu-desktop">
+        <!-- Topbar -->
+        <div class="top-bar">
+            <div class="content-topbar flex-sb-m h-full container">
+                <div class="left-top-bar" style="font-family: Tahoma, sans-serif;">
+                    ارسال رایگان برای مشتریان پالادیوم
+                </div>
+
+                <div class="right-top-bar flex-w h-full">
+                    <a href="#" class="flex-c-m trans-04 p-lr-25">
+                        Help & FAQs
+                    </a>
+                    {% if request.user.is_authenticated %}
+                        {% if request.user.is_customer %}
+                            <a href="{% url 'customers:profile' %}" class="flex-c-m trans-04 p-lr-25"
+                               style="font-family: Tahoma, sans-serif;">
+                                حساب من
+                            </a>
+                        {% elif request.user.is_staff %}
+                            <a href="{% url 'vendors:profile' %}" class="flex-c-m trans-04 p-lr-25"
+                               style="font-family: Tahoma, sans-serif;">
+                                پنل فروشنده
+                            </a>
+                        {% endif %}
+                    {% endif %}
+
+
+                    <a href="#" class="flex-c-m trans-04 p-lr-25">
+                        EN
+                    </a>
+
+                    {% if request.user.is_authenticated %}
+                        <form action="{% url 'accounts:logout' %}" class="flex-c-m trans-04 p-lr-25"
+                              style="font-family: Tahoma, sans-serif;">
+                            {% csrf_token %}
+                            <a href="{% url 'accounts:logout' %}" class="flex-c-m trans-04 p-lr-25"
+                               style="font-family: Tahoma, sans-serif;">
+                                خروج
+                            </a>
+                        </form>
+                    {% endif %}
+
+                    {# User section #}
+                    {% if request.user.is_authenticated %}
+                        <div class="flex-c-m trans-04 p-lr-25">
+                            {% if request.user.photo %}
+                                <img class="rounded-circle" src="{{ request.user.photo.url }}" alt="photo"
+                                     width="25">
+                            {% else %}
+                                <img class="rounded-circle"
+                                     src="{% static 'defualt/defualt.jpg' %}" alt="static"
+                                     width="25">
+                            {% endif %}
+                            {% if request.user.username %}
+                                {{ request.user.username }}
+                            {% elif request.user.phone %}
+                                {{ request.user.phone }}
+                            {% elif request.user.email %}
+                                {{ request.user.email }}
+                            {% endif %}
+
+                        </div>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="flex-c-m trans-04 p-lr-25"
+                           style="font-family: Tahoma, sans-serif;">
+                            ورود <!-- Login -->
+                        </a>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock header %}
+
+{% block slide-section %}
+    {#    DO NOT write anything in this block!#}
+{% endblock slide-section %}
+
+<!-- banner section -->
+{% block banner %}
+    {#    DO NOT write anything in this block!#}
+
+{% endblock banner %}
+<!-- end banner section -->
+
+{% block content %}
+
+    <h1 class="text-center py-2"
+        style="font-family: Tahoma, sans-serif;">{{ request.user.first_name }} {{ request.user.last_name }}</h1>
+    <div class="container" style="font-family: Tahoma, sans-serif; text-align: right;">
+        <div class="main-body mb-3">
+
+            <div class="row gutters-sm">
+                <div class="col-md-4">
+                    <div class="card" style="height: 100%">
+                        <div class="card-body">
+                            <div class="d-flex flex-column align-items-center text-center">
+                                {% if request.user.photo %}
+                                    <img src="{{ request.user.photo.url }}" alt="profile_photo"
+                                         class="rounded-circle"
+                                         width="250">
+                                {% else %}
+                                    <img src="{% static 'accounts/images/default_profile_photo.png' %}"
+                                         alt="profile_photo" class="rounded-circle" width="250">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-8">
+                    <div class="card" style="height: 100%">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h6 class="mb-0">اسم کامل</h6>
+                                </div>
+                                <div class="col-sm-3 text-secondary">
+                                    {{ request.user.first_name }} {{ request.user.last_name }}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h6 class="mb-0">شغل</h6>
+                                </div>
+                                <div class="col-sm-3 text-secondary">
+                                    {{ role }}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h6 class="mb-0">ایمیل</h6>
+                                </div>
+                                <div class="col-sm-3 text-secondary">
+                                    {{ request.user.email }}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h6 class="mb-0">شماره تلفن</h6>
+                                </div>
+                                <div class="col-sm-3 text-secondary">
+                                    {{ request.user.phone }}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h6 class="mb-0">شرکت</h6>
+                                </div>
+                                {% if company %}
+                                    <div class="col-sm-3 text-secondary">
+                                        <p>{{ company.name }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h6 class="mb-0">آدرس شرکت</h6>
+                                </div>
+                                {% if company %}
+                                    <div class="col-sm-3 text-secondary">
+                                        <p>{{ company.address }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <hr>
+                            <!--extera_profile_data-->
+                            {% block extera_profile_data %} {% endblock %}
+                            <!--extera_profile_data-->
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h6 class="mb-0">تاریخ ورود</h6>
+                                </div>
+                                <div class="col-sm-3 text-secondary">
+                                    {{ request.user.date_joined|date }}
+                                </div>
+                            </div>
+                            <hr>
+
+                            <!-- edit button -->
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    {% block edit_button %}
+                                        <a class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail"
+                                           href="{% url 'vendors:profile-edit' %}"
+                                           style="font-family: Tahoma, sans-serif;">
+                                            تغییر
+                                        </a>
+
+
+                                    {% endblock %}
+                                </div>
+                            </div>
+                            <!-- edit button -->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock content %}

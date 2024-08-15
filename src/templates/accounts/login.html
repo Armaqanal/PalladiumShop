@@ -40,8 +40,22 @@
 <body>
 <form action="{% url 'accounts:login' %}" method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
+    <div>
+        <label for="identifier">Email or Phone Number</label>
+        {{ form.identifier }}
+    </div>
+    <div>
+        <label for="password">Password</label>
+        {{ form.password }}
+    </div>
+    <div>
+        <button type="submit">Submit</button>
+    </div>
+    <div>
+        <a href="{% url 'accounts:register' %}">ثبت نام مشتری</a>
+        <br>
+        <a href="{% url 'accounts:register-vendor' %}">ثبت نام فروشنده</a>
+    </div>
 </form>
 </body>
 </html>
