@@ -19,11 +19,16 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
+
 urlpatterns = [
+    # path('', TemplateView.as_view(template_name='website/pages/home.html'), name='website-home'),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('customers/', include('customers.urls')),
     path('vendors/', include('vendors.urls')),
+    path('orders/', include('orders.urls')),
+    # path('api-auth/', include('rest_framework.urls')), #TODO
+    path('api/v1/', include('orders.api.v1.urls')),
     # website
     path('', include('website.urls')),
 ]

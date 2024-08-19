@@ -1,0 +1,373 @@
+{% extends 'website/base.html' %}
+{% load static %}
+
+{% block header %}
+
+    <div class="container-menu-desktop">
+        <!-- Topbar -->
+        <div class="top-bar">
+            <div class="content-topbar flex-sb-m h-full container">
+                <div class="left-top-bar" style="font-family: Tahoma, sans-serif;">
+                    ارسال رایگان برای مشتریان پالادیوم
+                </div>
+
+                <div class="right-top-bar flex-w h-full">
+                    <a href="#" class="flex-c-m trans-04 p-lr-25">
+                        Help & FAQs
+                    </a>
+                    {% if request.user.is_authenticated %}
+                        {% if request.user.is_customer %}
+                            <a href="{% url 'customers:profile' %}" class="flex-c-m trans-04 p-lr-25"
+                               style="font-family: Tahoma, sans-serif;">
+                                حساب من
+                            </a>
+                        {% endif %}
+                    {% endif %}
+
+                    <a href="#" class="flex-c-m trans-04 p-lr-25">
+                        EN
+                    </a>
+
+                    {% if request.user.is_authenticated %}
+                        <form action="{% url 'accounts:logout' %}" method="post" class="flex-c-m trans-04 p-lr-25"
+                              style="font-family: Tahoma, sans-serif;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn">خروج</button>
+                        </form>
+                    {% endif %}
+
+                    {# User section #}
+                    {% if request.user.is_authenticated %}
+                        <div class="flex-c-m trans-04 p-lr-25">
+                            {% if request.user.photo %}
+                                <img class="rounded-circle" src="{{ request.user.photo.url }}" alt="photo"
+                                     width="25">
+                            {% else %}
+                                <img class="rounded-circle"
+                                     src="{% static 'default/defualt.jpg' %}" alt="default"
+                                     width="25">
+                            {% endif %}
+                            {% if request.user.firstname %}
+                                {{ request.user.firstname }}
+                            {% elif request.user.phone %}
+                                {{ request.user.phone }}
+                            {% elif request.user.email %}
+                                {{ request.user.email }}
+                            {% endif %}
+
+                        </div>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="flex-c-m trans-04 p-lr-25"
+                           style="font-family: Tahoma, sans-serif;">
+                            ورود <!-- Login -->
+                        </a>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock header %}
+
+{% block slide-section %}
+    {#    DO NOT write anything in this block!#}
+{% endblock slide-section %}
+
+<!-- banner section -->
+{% block banner %}
+    {#    DO NOT write anything in this block!#}
+{% endblock banner %}
+<!-- end banner section -->
+
+
+{% block content %}
+    <div class="custom-cart-page">
+        <style>
+            .custom-cart-page {
+                background: #ddd;
+                min-height: 100vh;
+                display: flex;
+                font-family: sans-serif;
+                font-size: 0.8rem;
+                font-weight: bold;
+            }
+
+            .custom-cart-page .title {
+                margin-bottom: 5vh;
+            }
+
+            .custom-cart-page .card {
+                margin: auto;
+                max-width: 950px;
+                width: 90%;
+                box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+                border-radius: 1rem;
+                border: transparent;
+            }
+
+            @media (max-width: 767px) {
+                .custom-cart-page .card {
+                    margin: 3vh auto;
+                }
+            }
+
+            .custom-cart-page .cart {
+                background-color: #fff;
+                padding: 4vh 5vh;
+                border-bottom-left-radius: 1rem;
+                border-top-left-radius: 1rem;
+            }
+
+            @media (max-width: 767px) {
+                .custom-cart-page .cart {
+                    padding: 4vh;
+                    border-bottom-left-radius: unset;
+                    border-top-right-radius: 1rem;
+                }
+            }
+
+            .custom-cart-page .summary {
+                background-color: #ddd;
+                border-top-right-radius: 1rem;
+                border-bottom-right-radius: 1rem;
+                padding: 4vh;
+                color: rgb(65, 65, 65);
+            }
+
+            @media (max-width: 767px) {
+                .custom-cart-page .summary {
+                    border-top-right-radius: unset;
+                    border-bottom-left-radius: 1rem;
+                }
+            }
+
+            .custom-cart-page .summary .col-2 {
+                padding: 0;
+            }
+
+            .custom-cart-page .summary .col-10 {
+                padding: 0;
+            }
+
+            .custom-cart-page .row {
+                margin: 0;
+            }
+
+            .custom-cart-page .title b {
+                font-size: 1.5rem;
+            }
+
+            .custom-cart-page .main {
+                margin: 0;
+                padding: 2vh 0;
+                width: 100%;
+            }
+
+            .custom-cart-page .col-2, .custom-cart-page .col {
+                padding: 0 1vh;
+            }
+
+            .custom-cart-page a {
+                padding: 0 1vh;
+            }
+
+            .custom-cart-page .close {
+                margin-left: auto;
+                font-size: 0.7rem;
+            }
+
+            .custom-cart-page img {
+                width: 3.5rem;
+            }
+
+            .custom-cart-page .back-to-shop {
+                margin-top: 4.5rem;
+            }
+
+            .custom-cart-page h5 {
+                margin-top: 4vh;
+            }
+
+            .custom-cart-page hr {
+                margin-top: 1.25rem;
+            }
+
+            .custom-cart-page form {
+                padding: 2vh 0;
+            }
+
+            .custom-cart-page select {
+                border: 1px solid rgba(0, 0, 0, 0.137);
+                padding: 1.5vh 1vh;
+                margin-bottom: 4vh;
+                outline: none;
+                width: 100%;
+                background-color: rgb(247, 247, 247);
+            }
+
+            .custom-cart-page input {
+                border: 1px solid rgba(0, 0, 0, 0.137);
+                padding: 1vh;
+                margin-bottom: 4vh;
+                outline: none;
+                width: 100%;
+                background-color: rgb(247, 247, 247);
+            }
+
+            .custom-cart-page input:focus::-webkit-input-placeholder {
+                color: transparent;
+            }
+
+            .custom-cart-page .btn {
+                background-color: #000;
+                border-color: #000;
+                color: white;
+                width: 100%;
+                font-size: 0.7rem;
+                margin-top: 4vh;
+                padding: 1vh;
+                border-radius: 0;
+            }
+
+            .custom-cart-page .btn:focus {
+                box-shadow: none;
+                outline: none;
+                color: white;
+                -webkit-user-select: none;
+                transition: none;
+            }
+
+            .custom-cart-page .btn:hover {
+                color: white;
+            }
+
+            .custom-cart-page a {
+                color: black;
+            }
+
+            .custom-cart-page a:hover {
+                color: black;
+                text-decoration: none;
+            }
+
+            .custom-cart-page #code {
+                background-image: linear-gradient(to left, rgba(255, 255, 255, 0.253), rgba(255, 255, 255, 0.185)), url("https://img.icons8.com/small/16/000000/long-arrow-right.png");
+                background-repeat: no-repeat;
+                background-position-x: 95%;
+                background-position-y: center;
+            }
+        </style>
+        <br>
+        <br>
+        <br>
+<div class="container">
+    <div id="order-container">
+        <div id="error-container" class="alert alert-danger" style="display: none;"></div>
+        <div class="card" style="display: none;">
+            <div class="row">
+                <div class="col-md-8 cart">
+                    <div class="title">
+                        <div class="row">
+                            <div class="col">
+                                <h4><b>Shopping Cart</b></h4>
+                            </div>
+                            <div class="col align-self-center text-right text-muted" id="order-quantity"></div>
+                        </div>
+                    </div>
+                    <div id="order-items-container"></div>
+                    <div class="back-to-shop">
+                        <a href="#">&leftarrow;</a><span class="text-muted">Back to shop</span>
+                    </div>
+                </div>
+                <div class="col-md-4 summary">
+                    <div><h5><b>Summary</b></h5></div>
+                    <hr>
+                    <div class="row">
+                        <div class="col" style="padding-left:0;">ITEMS <span id="order-quantity-summary"></span></div>
+                        <div class="col text-right" id="grand-total-summary"></div>
+                    </div>
+                    <form>
+                        <p>SHIPPING</p>
+                        <select>
+                            <option class="text-muted">Standard-Delivery - $5.00</option>
+                        </select>
+                        <p>GIVE CODE</p>
+                        <input id="code" placeholder="Enter your code">
+                    </form>
+                    <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
+                        <div class="col">TOTAL PRICE</div>
+                        <div class="col text-right" id="grand-total"></div>
+                    </div>
+                    <button class="btn">CHECKOUT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/v1/order/list')
+        .then(response => response.json())
+        .then(data => {
+            const orderContainer = document.getElementById('order-container');
+            const errorContainer = document.getElementById('error-container');
+            const card = document.querySelector('.card');
+            const orderItemsContainer = document.getElementById('order-items-container');
+            const orderQuantityElement = document.getElementById('order-quantity');
+            const orderQuantitySummaryElement = document.getElementById('order-quantity-summary');
+            const grandTotalSummaryElement = document.getElementById('grand-total-summary');
+            const grandTotalElement = document.getElementById('grand-total');
+
+            if (data.length === 0 || data.error) {
+                errorContainer.style.display = 'block';
+                errorContainer.innerText = data.error || 'No orders found';
+                card.style.display = 'none';
+            } else {
+                const order = data[0]; // Assuming you're working with the first order
+                card.style.display = 'block';
+
+                // Set order quantity
+                orderQuantityElement.innerText = `${order.order_quantity} items`;
+                orderQuantitySummaryElement.innerText = `${order.order_quantity}`;
+
+                // Populate the order items
+                order.order_items.forEach(item => {
+                    const itemHtml = `
+                        <div class="row border-top border-bottom">
+                            <div class="row main align-items-center">
+                                <div class="col-2">
+                                    <img src="${item.product.image ? item.product.image : '/static/default_image.jpg'}" class="img-fluid" alt="${item.product.name}">
+                                </div>
+                                <div class="col">
+                                    <div class="row text-muted">${item.product.name}</div>
+                                    <div class="row">${item.product.category}</div>
+                                </div>
+                                <div class="col">
+                                    <a href="#" class="quantity-btn" data-action="decrease">-</a>
+                                    <input type="number" class="border" data-product="${item.product.id}" value="${item.quantity}" min="1">
+                                    <a href="#" class="quantity-btn" data-action="increase">+</a>
+                                </div>
+                                <div class="col">
+                                    $${(item.subtotal).toFixed(2)} <span class="close">&#10005;</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    orderItemsContainer.innerHTML += itemHtml;
+                });
+
+                // Set the total price
+                grandTotalSummaryElement.innerText = `$${(order.grand_total).toFixed(2)}`;
+                grandTotalElement.innerText = `$${(order.grand_total).toFixed(2)}`;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching order data:', error);
+            errorContainer.style.display = 'block';
+            errorContainer.innerText = 'Error fetching order data';
+        });
+});
+</script>
+
+{% endblock content %}

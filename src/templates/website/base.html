@@ -6,6 +6,8 @@
     <title>Home</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
     <!--===============================================================================================-->
     <link rel="icon" type="image/png" href="{% static 'website/images/icons/favicon.png' %}"/>
     <!--===============================================================================================-->
@@ -47,13 +49,6 @@
     {% include 'website/sections/header_section.html' %}
 {% endblock header %}
 <!-- end header section -->
-
-
-<!-- cart section starts -->
-{% block cart %}
-    {% include 'website/sections/cart_section.html' %}
-{% endblock cart %}
-<!-- end cart section -->
 
 
 <!-- slider section -->
@@ -364,10 +359,14 @@
         console.log('Event listeners for:', element);
         console.log(getEventListeners(element));
     });
-    
+
 </script>
 <!--===============================================================================================-->
 <script src="{% static 'website/js/main.js' %}"></script>
+<script>
+    var addToCartUrl = "{% url 'orders:add' %}";
+</script>
+<script src="{% static 'website/js/script.js' %}"></script>
 
 </body>
 </html>

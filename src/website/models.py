@@ -9,9 +9,9 @@ from django.core.validators import (MinLengthValidator, MaxLengthValidator,
 from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from django.core.exceptions import PermissionDenied
 from vendors.models import Company
 from django.utils.text import slugify
+from django.urls import reverse_lazy
 
 from website.manager import ApprovedCommentManager
 
@@ -41,7 +41,7 @@ class Category(models.Model):
 
 
 class Discount(models.Model):
-    percent = models.IntegerField(null=True, blank=True,
+    percent = models.IntegerField(default=0, null=True, blank=True,
                                   verbose_name="درصد", help_text="چند درصد تخفیف؟")
     amount = models.PositiveBigIntegerField(default=0, verbose_name="چقدر تخفیف؟")
     start_date = models.DateTimeField(default=timezone.now, null=True, blank=True,
@@ -60,8 +60,6 @@ class Discount(models.Model):
     def clean(self):
         if self.percent is not None and self.amount > 0:
             raise ValueError("شما نمیتوانید هم درصدی هم مقداری تخفیف بزارید")
-        if self.percent is None and self.amount == 0:
-            raise ValueError("باید یا درصدی یا مقداری تخفیف بزارید")
 
     def calculate_price(self, price: int) -> int:
         self.clean()
@@ -98,9 +96,10 @@ class Product(DateFieldsMixin, models.Model):
 
     slug = models.SlugField(max_length=100, blank=True, null=True, allow_unicode=True)
 
-    def change_inventory(self, new_value: int):
-        if self.inventory - new_value >= 0:
-            self.inventory -= new_value
+    def change_inventory(self, change: int):
+        new_inventory = self.inventory + change
+        if new_inventory >= 0:
+            self.inventory = new_inventory
             self.save()
         else:
             raise ValueError("انبار نمیتونه منفی باشه")
@@ -117,6 +116,9 @@ class Product(DateFieldsMixin, models.Model):
     def update_average_rating(self):
         if self.rating_count > 0:
             self.average_rating = round(self.sum_rating / self.rating_count, 1)
+
+    def get_absolute_url(self):
+        return reverse_lazy('website:product-detail', kwargs={'slug': self.slug})
 
     def save(self, *args, **kwargs):
         if not self.slug:

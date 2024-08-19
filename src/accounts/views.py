@@ -2,17 +2,22 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
-
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView
-from django.contrib import messages
 
 from customers.forms import CustomerRegisterForm, LoginForm
 from customers.models import Customer
-from django.views import generic
+from orders.models import Order, OrderItem
+from website.models import Product
+from django.shortcuts import get_object_or_404
 
 from vendors.models import Vendor
 from vendors.forms import OwnerRegistrationForm
+from django.contrib.auth import login as auth_login
+from django.contrib.auth.views import LoginView
+from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
+import json
 
 User = get_user_model()
 
@@ -31,9 +36,33 @@ class PalladiumLoginView(LoginView):
         context['next_url'] = f"?{self.redirect_field_name}=" + self.request.GET.get(self.redirect_field_name, '')
         return context
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        cart = json.loads(self.request.COOKIES.get('cart', '{}'))
+        if cart:
+            try:
+                customer = Customer.objects.get(pk=self.request.user.pk)
+                order = Order.objects.create(customer=customer, state=Order.STATE.UNPAID)
+                for product_id, quantity in cart.items():
+                    product = get_object_or_404(Product, pk=product_id)
+                    OrderItem.objects.create(
+                        order=order,
+                        product=product,
+                        quantity=quantity,
+                        price=product.price,
+                        discounted_price=product.final_price
+                    )
+                response.delete_cookie('cart')
+            except ObjectDoesNotExist:
+                return JsonResponse({'message': 'Error creating order. Please try again later.'}, status=500)
+
+        auth_login(self.request, self.request.user)
+        return response
+
 
 class PalladiumLogoutView(LoginRequiredMixin, LogoutView):
     next_page = reverse_lazy('accounts:home')
+    # next_page = redirect('/')
 
 
 class PalladiumRegisterView(CreateView):
@@ -42,15 +71,6 @@ class PalladiumRegisterView(CreateView):
     form_class = CustomerRegisterForm
     success_url = reverse_lazy('accounts:login')
 
-    # def form_valid(self, form):
-    #     messages.success(self.request, f"اکانت شما با موفقیت ساخته شد")
-    #     return super(PalladiumRegisterView, self).form_valid(form)
-    #
-    # def form_invalid(self, form):
-    #     for error, message in form.errors.items():
-    #         messages.error(self.request, message)
-    #     return super(PalladiumRegisterView, self).form_invalid(form)
-
 
 class PalladiumOwnerRegisterView(CreateView):
     # chera ba formView nemishe
@@ -58,10 +78,4 @@ class PalladiumOwnerRegisterView(CreateView):
     form_class = OwnerRegistrationForm
     success_url = reverse_lazy('accounts:login')
     template_name = 'accounts/register-vendor.html'
-
-    # def get(self,request,*args,**kwargs):
-    #     if request.user.is_authenticated:
-    #         return reverse_lazy('profile-vendor')
-    #     return super().get(request, *args, **kwargs)
-
 

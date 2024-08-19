@@ -1,4 +1,4 @@
-from .models import ProductImage, Comment
+from .models import ProductImage, Comment, Product, Discount
 from django import forms
 
 
@@ -7,29 +7,24 @@ class ProductImageForm(forms.ModelForm):
 
     class Meta:
         model = ProductImage
-        fields = '__all__'
-
-
-# class CommentForm(forms.ModelForm):
-#     class Meta:
-#         model = Comment
-#         fields = ['text']
-# widgets = {
-#     'text': forms.Textarea(attrs={'rows': 2, 'class': 'form-control', 'placeholder': 'Write a review'}),
-# }
-
+        fields = ['image']
 
 class CommentForm(forms.ModelForm):
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.fields['product'].disabled = True
-    #     self.fields['user'].disabled = True
-
-        # OR set readonly widget attribute.
-
-    # self.fields['name'].widget.attrs['readonly'] = True
-    # self.fields['email'].widget.attrs['readonly'] = True
-
     class Meta:
         model = Comment
         fields = ['text']
+
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        exclude = ['created_at', 'updated_at', 'slug', 'company','rating_count','sum_rating','average_rating']
+        widgets = {
+            'description': forms.Textarea(),
+        }
+
+
+class DiscountForm(forms.ModelForm):
+    class Meta:
+        model = Discount
+        fields = '__all__'

@@ -1,0 +1,278 @@
+{% extends 'website/base.html' %}
+{% load static %}
+
+{% block header %}
+
+    <div class="container-menu-desktop">
+        <!-- Topbar -->
+        <div class="top-bar">
+            <div class="content-topbar flex-sb-m h-full container">
+                <div class="left-top-bar" style="font-family: Tahoma, sans-serif;">
+                    ارسال رایگان برای مشتریان پالادیوم
+                </div>
+
+                <div class="right-top-bar flex-w h-full">
+                    <a href="#" class="flex-c-m trans-04 p-lr-25">
+                        Help & FAQs
+                    </a>
+                    {% if request.user.is_authenticated %}
+                        {% if request.user.is_customer %}
+                            <a href="{% url 'customers:profile' %}" class="flex-c-m trans-04 p-lr-25"
+                               style="font-family: Tahoma, sans-serif;">
+                                حساب من
+                            </a>
+                        {% endif %}
+                    {% endif %}
+
+                    <a href="#" class="flex-c-m trans-04 p-lr-25">
+                        EN
+                    </a>
+
+                    {% if request.user.is_authenticated %}
+                        <form action="{% url 'accounts:logout' %}" class="flex-c-m trans-04 p-lr-25"
+                              style="font-family: Tahoma, sans-serif;">
+                            {% csrf_token %}
+                            <a href="{% url 'accounts:logout' %}" class="flex-c-m trans-04 p-lr-25"
+                               style="font-family: Tahoma, sans-serif;">
+                                خروج
+                            </a>
+                        </form>
+                    {% endif %}
+
+                    {# User section #}
+                    {% if request.user.is_authenticated %}
+                        <div class="flex-c-m trans-04 p-lr-25">
+                            {% if request.user.photo %}
+                                <img class="rounded-circle" src="{{ request.user.photo.url }}" alt="photo"
+                                     width="25">
+                            {% else %}
+                                <img class="rounded-circle"
+                                     src="{% static 'defualt/defualt.jpg' %}" alt="static"
+                                     width="25">
+                            {% endif %}
+                            {% if request.user.firstname %}
+                                {{ request.user.firstname }}
+                            {% elif request.user.phone %}
+                                {{ request.user.phone }}
+                            {% elif request.user.email %}
+                                {{ request.user.email }}
+                            {% endif %}
+
+                        </div>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="flex-c-m trans-04 p-lr-25"
+                           style="font-family: Tahoma, sans-serif;">
+                            ورود <!-- Login -->
+                        </a>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock header %}
+
+{% block slide-section %}
+    {#    DO NOT write anything in this block!#}
+{% endblock slide-section %}
+
+<!-- banner section -->
+{% block banner %}
+    {#    DO NOT write anything in this block!#}
+
+{% endblock banner %}
+<!-- end banner section -->
+
+
+
+{% block content %}
+
+    <br>
+    <br>
+    <br>
+
+    <div class="container" style="font-family: Tahoma, sans-serif; text-align: right;">
+        <div class="main-body mb-3">
+            <div class="row gutters-sm">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {% if form.errors %}
+                                    <div class="form-errors"
+                                         style="font-family: Tahoma, serif; text-align: right; margin-bottom: 1rem;">
+                                        {% for field in form %}
+                                            {% for error in field.errors %}
+                                                <div class="alert alert-danger">{{ error }}</div>
+                                            {% endfor %}
+                                        {% endfor %}
+                                        {% for error in form.non_field_errors %}
+                                            <div class="alert alert-danger">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="card" style="height: auto;">
+                                            <div class="card-body"
+                                                 style="font-family: Tahoma, serif; text-align: right;">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <h6 class="mb-0">اسم محصول</h6>
+                                                    </div>
+                                                    <div class="col-sm-12 text-secondary">
+                                                        {{ form.name }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <h6 class="mb-0">قیمت محصول</h6>
+                                                    </div>
+                                                    <div class="col-sm-12 text-secondary">
+                                                        {{ form.price }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <h6 class="mb-0">انبار</h6>
+                                                    </div>
+                                                    <div class="col-sm-12 text-secondary">
+                                                        {{ form.inventory }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <h6 class="mb-0">تخفیف</h6>
+                                                    </div>
+                                                    <div class="col-sm-12 text-secondary">
+                                                        {{ form.discount }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <h6 class="mb-0">دسته‌بندی</h6>
+                                                    </div>
+                                                    <div class="col-sm-12 text-secondary">
+                                                        {{ form.category }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <h6 class="mb-0">توضیحات</h6>
+                                                    </div>
+                                                    <div class="col-sm-12 text-secondary">
+                                                        {{ form.description }}
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <fieldset>
+                                                            <legend>تخفیف</legend>
+                                                            {{ discount.as_p }}
+                                                        </fieldset>
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <fieldset>
+                                                            <legend>تصاویر محصول</legend>
+                                                            {{ images_form.images.label_tag }}<br>
+                                                            {{ images_form.images }}
+                                                        </fieldset>
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail"
+                                                                style="font-family: Tahoma, sans-serif;">
+                                                            ذخیره
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card" style="height: auto;">
+                                <div class="card-body">
+                                    <div class="d-flex flex-column align-items-center text-center mb-4">
+                                        {% if request.user.photo %}
+                                            <img src="{{ request.user.photo.url }}" alt="profile_photo"
+                                                 class="rounded-circle" width="250">
+                                        {% else %}
+                                            <img src="{% static 'accounts/images/default_profile_photo.png' %}"
+                                                 alt="profile_photo" class="rounded-circle" width="250">
+                                        {% endif %}
+                                    </div>
+                                    <div class="list-group" id="list-tab" role="tablist">
+                                        <a class="list-group-item list-group-item-action custom-active"
+                                           id="list-home-list"
+                                           data-bs-toggle="list" href="{% url 'website:product-list' %}"
+                                           role="tab"
+                                           aria-controls="list-home">
+                                            خانه
+                                            <img src="{% static 'website/images/icons/icons8-home-20.png' %}"
+                                                 alt="Icon"
+                                                 class="icon">
+                                        </a>
+                                        <a class="list-group-item list-group-item-action"
+                                           id="list-profile-list"
+                                           data-bs-toggle="list" href="{% url 'vendors:profile' %}"
+                                           role="tab"
+                                           aria-controls="list-profile">پروفایل
+                                            <img src="{% static 'website/images/icons/user.png' %}"
+                                                 alt="Icon"
+                                                 class="icon">
+                                        </a>
+                                        <a class="list-group-item list-group-item-action"
+                                           id="list-messages-list"
+                                           data-bs-toggle="list" href="#list-messages" role="tab"
+                                           aria-controls="list-messages">سفارشات
+                                            <img src="{% static 'website/images/icons/order.png' %}"
+                                                 alt="Icon"
+                                                 class="icon"></a>
+                                        <a class="list-group-item list-group-item-action"
+                                           id="list-settings-list"
+                                           data-bs-toggle="list" href="#list-settings" role="tab"
+                                           aria-controls="list-settings">نشانی شرکت
+                                            <img src="{% static 'website/images/icons/Address.png' %}"
+                                                 alt="Icon"
+                                                 class="icon">
+                                        </a>
+                                        <a class="list-group-item list-group-item-action"
+                                           id="list-settings-list"
+                                           data-bs-toggle="list" href="#list-settings" role="tab"
+                                           aria-controls="list-settings">خروج
+                                            <img src="{% static 'website/images/icons/logout.png' %}"
+                                                 alt="Icon"
+                                                 class="icon">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <br>
+
+{% endblock content %}
+
+

@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'vendors',
     'website',
     'django_jalali',
-    'jalali_date'
+    'jalali_date',
+    'rest_framework',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -149,3 +151,5 @@ MESSAGE_TAGS = {
 }
 
 LOGIN_REDIRECT_URL = '/'
+
+

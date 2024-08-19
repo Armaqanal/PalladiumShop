@@ -11,7 +11,7 @@ from django.db.models.signals import pre_save, post_delete, post_save
 from django.dispatch import receiver
 
 
-class DateFieldsMixin(models.Model):
+class DateFieldsMixin(models.Model): #TODO
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="تاریخ ویرایش")
 
@@ -20,9 +20,6 @@ class DateFieldsMixin(models.Model):
 
 
 class User(AbstractUser):
-    # def profile_image_upload_to(instance, filename):
-    #     extension = Path(filename).suffix
-    #     return f"profile_photos/{instance.__class__.__name__.lower()}/{instance.username}{extension}"
 
     class Gender(models.TextChoices):
         MALE = "M", "مرد"
@@ -63,7 +60,6 @@ class User(AbstractUser):
         null=True, blank=True, default=None
     )
 
-    # photo = models.ImageField(upload_to=profile_image_upload_to, null=True, blank=True, verbose_name="عکس")
     date_of_birth = models.DateField(null=True, blank=True, verbose_name="تاریخ تولد")
     gender = models.CharField(max_length=1, choices=Gender.choices, verbose_name="جنسیت")
     date_joined = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ عضویت")

@@ -5,6 +5,10 @@
 
 {% block content %}
 
+    <!-- display messages -->
+    {% include 'website/sections/message_display.html' %}
+    <!-- display messages -->
+
     <!-- Product -->
     <div class="bg0 m-t-23 p-b-140">
         <div class="container">
@@ -16,53 +20,61 @@
                 <!-- Loop through products -->
                 {% for product in products %}
                     <!-- Example Product Block -->
-                    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                        <!-- Block2 -->
-                        <div class="block2"
-                             style="display: flex; flex-direction: column; justify-content: space-between;">
-                            <!-- Website Image -->
-                            <div class="website-logo">
-                                <img src="{% static 'website/images/icons/logo-01.png' %}" alt="Website Logo">
-                            </div>
-
-                            <div class="block2-pic hov-img0">
-                                {% if product.images.exists %}
-                                    <!-- Display only the first image -->
-                                    <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}">
-                                {% endif %}
-                                <a href="{% url 'website:product-detail' slug=product.slug %}"
-                                   class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04"
-                                   style="font-family: Tahoma, sans-serif;">
-                                    جزئیات محصول
-                                </a>
-                            </div>
-
-
-                            <!-- Product Details -->
-                            <div class="block2-txt flex-w flex-t p-t-14">
-                                <div class="block2-txt-child1 flex-col-l">
-                                    <a href="product-detail.html"
-                                       class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                        {{ product.name }}
-                                    </a>
-                                    <span class="stext-105 cl3">{{ product.price }}</span>
+                    <div class="productContainer">
+                        <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
+                            <!-- Block2 -->
+                            <div class="block2"
+                                 style="display: flex; flex-direction: column; justify-content: space-between;">
+                                <!-- Website Image -->
+                                <div class="website-logo">
+                                    <img src="{% static 'website/images/icons/logo-01.png' %}" alt="Website Logo">
                                 </div>
-                                <div class="block2-txt-child2 flex-r p-t-3">
-                                    <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                        <img class="icon-heart1 dis-block trans-04"
-                                             src="{% static 'website/images/icons/icon-heart-01.png' %}" alt="ICON">
-                                        <img class="icon-heart2 dis-block trans-04 ab-t-l"
-                                             src="{% static 'website/images/icons/icon-heart-02.png' %}" alt="ICON">
+
+                                <div class="block2-pic hov-img0">
+                                    {% if product.images.exists %}
+                                        <!-- Display only the first image -->
+                                        <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}">
+                                    {% endif %}
+                                    <a href="{% url 'website:product-detail' slug=product.slug %}"
+                                       class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04"
+                                       style="font-family: Tahoma, sans-serif;">
+                                        جزئیات محصول
                                     </a>
                                 </div>
-                            </div>
 
+
+                                <!-- Product Details -->
+                                <div class="block2-txt flex-w flex-t p-t-14">
+                                    <div class="block2-txt-child1 flex-col-l">
+                                        <a href="product-detail.html"
+                                           class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                            {{ product.name }}
+                                        </a>
+                                        <span class="stext-105 cl3">${{ product.price|floatformat:1 }}</span>
+                                    </div>
+                                    <div class="block2-txt-child2 flex-r p-t-3">
+                                        {#                                    <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">#}
+                                        {#                                        <img class="icon-heart1 dis-block trans-04"#}
+                                        {#                                             src="{% static 'website/images/icons/icons8-shop-30(1).png' %}" alt="ICON">#}
+                                        {#                                        <img class="icon-heart2 dis-block trans-04 ab-t-l"#}
+                                        {#                                             src="{% static 'website/images/icons/icons8-shop-30.png' %}" alt="ICON">#}
+                                        {#                                    </a>#}
+                                        <div class="layer-slick1" data-appear="zoomIn" data-delay="1600">
+                                            <button data-product="{{ product.id }}" data-action="add"
+                                                    class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04"
+                                                    type="button">
+                                                Shop Now
+                                            </button>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
             </div>
-
-
         </div>
     </div>
 
