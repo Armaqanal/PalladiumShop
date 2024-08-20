@@ -132,11 +132,11 @@
         }
 
         .custom-cart-page .summary {
-            background-color: #ddd;
+            background-color: #717fe0;
             border-top-right-radius: 1rem;
             border-bottom-right-radius: 1rem;
             padding: 4vh;
-            color: rgb(65, 65, 65);
+            color: rgb(255,255,255);
         }
 
         @media (max-width: 767px) {
@@ -267,20 +267,23 @@
     <br>
     <br>
     <br>
-    <!-- display messages -->
-    {% include 'website/sections/message_display.html' %}
-    <!-- display messages -->
-    <div class="container">
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- display messages -->
+{% include 'website/sections/message_display.html' %}
+<!-- display messages -->
+<div class="container" style="font-family: 'Tahoma', sans-serif;">
         <div class="card">
             <div class="row">
                 <div class="col-md-8 cart">
                     <div class="title">
                         <div class="row">
                             <div class="col">
-                                <h4><b>Shopping Cart</b></h4>
+                                <h5 style="font-family: 'Tahoma', sans-serif;">سبد خرید</h5>
                             </div>
                             <div class="col align-self-center text-right text-muted">
-                                {{ order.order_quantity }} items
+                                {{ order.order_quantity }} آیتم
                             </div>
                         </div>
                     </div>
@@ -293,175 +296,184 @@
                                              alt="{{ item.product.name }}">
                                     {% else %}
                                         <img src="{% static 'default_image.jpg' %}" class="img-fluid"
-                                             alt="Default Image">
+                                             alt="تصویر پیش‌فرض">
                                     {% endif %}
                                 </div>
                                 <div class="col">
-                                    <div class="row text-muted">{{ item.product.name }}</div>
-                                    <div class="row">{{ item.product.category }}</div>
+                                    <div class="row text-muted" style="font-family: 'Tahoma', sans-serif;">{{ item.product.name }}</div>
+                                    <div class="row" style="font-family: 'Tahoma', sans-serif;">{{ item.product.category }}</div>
                                 </div>
                                 <div class="col">
                                     <a href="#" class="quantity-btn" data-action="decrease"
-                                       data-item-id="{{ item.id }}">-</a>
+                                       data-item-id="{{ item.id }}" style="font-family: 'Tahoma', sans-serif;">-</a>
                                     <input type="number" class="border" data-item-id="{{ item.id }}"
-                                           value="{{ item.quantity }}" min="1">
+                                           value="{{ item.quantity }}" min="1" style="font-family: 'Tahoma', sans-serif;">
                                     <a href="#" class="quantity-btn" data-action="increase"
-                                       data-item-id="{{ item.id }}">+</a>
+                                       data-item-id="{{ item.id }}" style="font-family: 'Tahoma', sans-serif;">+</a>
                                 </div>
                                 <div class="col">
                                     $<span class="subtotal"
-                                           data-item-id="{{ item.id }}">{{ item.subtotal|floatformat:2 }}</span>
-                                    <a href="#" class="delete-item" data-item-id="{{ item.id }}">&#10005;</a>
+                                           data-item-id="{{ item.id }}" style="font-family: 'Tahoma', sans-serif;">{{ item.subtotal|floatformat:2 }}</span>
+                                    <a href="#" class="delete-item" data-item-id="{{ item.id }}" style="font-family: 'Tahoma', sans-serif;">&#10005;</a>
                                 </div>
                             </div>
                         </div>
                     {% endfor %}
                     <div class="back-to-shop">
-                        <a href="{% url 'website:product-list' %}">&leftarrow;</a><span
-                            class="text-muted">Back to shop</span>
+                        <a href="{% url 'website:product-list' %}" style="font-family: 'Tahoma', sans-serif;">&leftarrow;</a><span
+                            class="text-muted" style="font-family: 'Tahoma', sans-serif;">بازگشت به فروشگاه</span>
                     </div>
                 </div>
                 <div class="col-md-4 summary">
-                    <div><h5><b>Summary</b></h5></div>
+                <div>
+                <h6 style="font-family: 'Tahoma', sans-serif; text-align: right;"><b>خلاصه</b></h6>
+                </div>
+
                     <hr>
                     <div class="row">
-                        <div class="col" style="padding-left:0;">ITEMS {{ order.order_quantity }}</div>
-                        <div class="col text-right">
+                        <div class="col" style="padding-left:0; font-family: 'Tahoma', sans-serif;">آیتم‌ها {{ order.order_quantity }}</div>
+                        <div class="col text-right" style="font-family: 'Tahoma', sans-serif;">
                             $<span class="total-cost">{{ order.total_cost|floatformat:2 }}</span>
                         </div>
                     </div>
                     <form method="POST" action="{% url 'orders:checkout' %}">
                         {% csrf_token %}
-                        <p>SHIPPING</p>
-                        <select>
-                            <option class="text-muted">Standard-Delivery - $5.00</option>
+                        <p style="font-family: 'Tahoma', sans-serif; text-align: right;">آدرس‌ها</p>
+                        <br>
+                        <select name="address" style="font-family: 'Tahoma', sans-serif; text-align: right;">
+                            <option value="" disabled selected>یک آدرس را انتخاب کنید</option>
+                            {% for address in addresses %}
+                                <option value="{{ address.id }}">
+                                    {{ address.street }}, {{ address.city }}, {{ address.state }} - {{ address.zip_code }}
+                                </option>
+                            {% endfor %}
+                            <option value="new" >آدرس جدید</option>
                         </select>
-                        <p>GIVE CODE</p>
-                        <input id="code" placeholder="Enter your code">
+                        <p style="font-family: 'Tahoma', sans-serif; text-align: right;">آدرس جدید</p>
+                        <br>
+                        <input type="text" name="new_address" placeholder="آدرس خود را وارد کنید" style="font-family: 'Tahoma',sans-serif; text-align: right;">
+                        <h6 style="font-family: 'Tahoma', sans-serif; text-align: right;">خیابان، شهر، استان - کد پستی</h6>
+                        <br>
                         <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
-                            <div class="col">TOTAL PRICE</div>
-                            <div class="col text-right">
+                            <div class="col" style="font-family: 'Tahoma', sans-serif;">قیمت کل</div>
+                            <div class="col text-right" style="font-family: 'Tahoma', sans-serif;">
                                 $<span class="total-cost">{{ order.total_cost|floatformat:2 }}</span>
                             </div>
                         </div>
-                        <button type="submit" class="btn">CHECKOUT</button>
+                        <button type="submit" class="btn" style="font-family: 'Tahoma', sans-serif;">پرداخت</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.quantity-btn').forEach(function (button) {
-                button.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const action = this.getAttribute('data-action');
-                    const itemId = this.getAttribute('data-item-id');
-                    const input = document.querySelector(`input[data-item-id="${itemId}"]`);
-                    let newValue = parseInt(input.value, 10);
-
-                    if (action === 'increase') {
-                        newValue += 1;
-                    } else if (action === 'decrease' && newValue > 1) {
-                        newValue -= 1;
-                    }
-
-                    input.value = newValue;
-
-                    const updateQuantityUrl = "{% url 'orders:update-quantity' %}";
-
-                    fetch(updateQuantityUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': getCookie('csrftoken')
-                        },
-                        body: JSON.stringify({
-                            'order_item_id': itemId,
-                            'quantity': newValue
-                        })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                const subtotalElement = document.querySelector(`.subtotal[data-item-id="${itemId}"]`);
-                                if (subtotalElement) {
-                                    subtotalElement.textContent = `${data.updated_subtotal.toFixed(2)}`;
-                                }
-                                const totalCostElements = document.querySelectorAll('.total-cost');
-                                totalCostElements.forEach(element => {
-                                    element.textContent = `${data.updated_total_cost.toFixed(2)}`;
-                                });
-                            } else {
-                                alert(data.error);
-                            }
-                        })
-                        .catch(error => console.error('Error:', error));
-                });
-            });
-
-            document.querySelectorAll('.delete-item').forEach(function (button) {
-                button.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const itemId = this.getAttribute('data-item-id');
-
-                    const deleteItemUrl = "{% url 'orders:delete_order_item' %}";
-
-                    fetch(deleteItemUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': getCookie('csrftoken')
-                        },
-                        body: JSON.stringify({
-                            'order_item_id': itemId
-                        })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                const itemRow = document.querySelector(`.row.main .delete-item[data-item-id="${itemId}"]`).closest('.row.border-top');
-                                if (itemRow) {
-                                    itemRow.remove();
-                                }
-                                const totalCostElements = document.querySelectorAll('.total-cost');
-                                totalCostElements.forEach(element => {
-                                    element.textContent = `${data.updated_total_cost.toFixed(2)}`;
-                                });
-                                const itemCount = document.querySelector('.text-muted');
-                                if (itemCount) {
-                                    itemCount.textContent = `${data.updated_item_count} items`;
-                                }
-                            } else {
-                                alert(data.error);
-                            }
-                        })
-                        .catch(error => console.error('Error:', error));
-                });
-            });
-
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
+<br>
+<br>
+<br>
+<script>
+    $(document).ready(function () {
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
                     }
                 }
-                return cookieValue;
             }
+            return cookieValue;
+        }
+
+        $('.quantity-btn').on('click', function (e) {
+            e.preventDefault();
+            const action = $(this).data('action');
+            const itemId = $(this).data('item-id');
+            const input = $(`input[data-item-id="${itemId}"]`);
+            let newValue = parseInt(input.val(), 10);
+
+            if (action === 'increase') {
+                newValue += 1;
+            } else if (action === 'decrease' && newValue > 1) {
+                newValue -= 1;
+            }
+
+            input.val(newValue);
+
+            const updateQuantityUrl = "{% url 'orders:update-quantity' %}";
+
+            $.ajax({
+                url: updateQuantityUrl,
+                type: 'POST',
+                data: JSON.stringify({
+                    'order_item_id': itemId,
+                    'quantity': newValue
+                }),
+                contentType: 'application/json',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                success: function (data) {
+                    if (data.success) {
+                        const subtotalElement = $(`.subtotal[data-item-id="${itemId}"]`);
+                        if (subtotalElement.length) {
+                            subtotalElement.text(data.updated_subtotal.toFixed(2));
+                        }
+                        $('.total-cost').each(function () {
+                            $(this).text(data.updated_total_cost.toFixed(2));
+                        });
+                    } else {
+                        alert(data.error);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
         });
 
-    </script>
+        $('.delete-item').on('click', function (e) {
+            e.preventDefault();
+            const itemId = $(this).data('item-id');
 
+            const deleteItemUrl = "{% url 'orders:delete_order_item' %}";
 
-    <br>
-    <br>
+            $.ajax({
+                url: deleteItemUrl,
+                type: 'POST',
+                data: JSON.stringify({
+                    'order_item_id': itemId
+                }),
+                contentType: 'application/json',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                success: function (data) {
+                    if (data.success) {
+                        const itemRow = $(`.delete-item[data-item-id="${itemId}"]`).closest('.row.border-top');
+                        if (itemRow.length) {
+                            itemRow.remove();
+                        }
+                        $('.total-cost').each(function () {
+                            $(this).text(data.updated_total_cost.toFixed(2));
+                        });
+                        const itemCount = $('.text-muted');
+                        if (itemCount.length) {
+                            itemCount.text(`${data.updated_item_count} items`);
+                        }
+                    } else {
+                        alert(data.error);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+    });
+</script>
+
 
 {% endblock %}
 

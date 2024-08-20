@@ -1,13 +1,10 @@
 from django.db import models
 from customers.models import DateFieldsMixin
-from customers.models import Customer
+from customers.models import Customer, Address
 from website.models import Product
 from django.core.validators import MinValueValidator
 from django.db.models.functions import Coalesce
 from django.db.models import Sum, IntegerField, Value
-
-
-# Create your models here.
 
 
 class Order(DateFieldsMixin, models.Model):
@@ -18,6 +15,7 @@ class Order(DateFieldsMixin, models.Model):
     state = models.CharField(max_length=20, choices=STATE.choices, default=STATE.UNPAID)
     total_cost = models.PositiveBigIntegerField(default=0)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
 
     def grand_total(self):
         self.total_cost = self.order_items.aggregate(

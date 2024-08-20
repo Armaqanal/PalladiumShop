@@ -42,7 +42,7 @@ class PalladiumLoginView(LoginView):
         if cart:
             try:
                 customer = Customer.objects.get(pk=self.request.user.pk)
-                order = Order.objects.create(customer=customer, state=Order.STATE.UNPAID)
+                order = Order.objects.create(customer=customer,address=customer.addresses.first(), state=Order.STATE.UNPAID)
                 for product_id, quantity in cart.items():
                     product = get_object_or_404(Product, pk=product_id)
                     OrderItem.objects.create(

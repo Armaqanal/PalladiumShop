@@ -5,7 +5,6 @@ from django.utils import timezone
 from customers.models import DateFieldsMixin
 from django.core.validators import (MinLengthValidator, MaxLengthValidator,
                                     MinValueValidator, MaxValueValidator)
-
 from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver

@@ -1,8 +1,12 @@
-
 from rest_framework import serializers
 from orders.models import Order, OrderItem
 from website.models import Product
-from customers.models import Customer
+from customers.models import Customer,Address
+
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = '__all__'
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -25,10 +29,12 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ['id', 'product', 'quantity', 'price', 'discounted_price', 'subtotal']
 
 
+
 class OrderSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer(read_only=True)
     order_items = OrderItemSerializer(many=True, read_only=True)
+    address = AddressSerializer(read_only=True)
 
     class Meta:
         model = Order
-        fields = ['id', 'state', 'total_cost', 'order_items', 'order_quantity', 'customer']
+        fields = ['id', 'state', 'total_cost', 'order_items', 'order_quantity', 'customer','address']

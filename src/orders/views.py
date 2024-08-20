@@ -1,7 +1,7 @@
 from .models import Order, OrderItem
 from django.http import JsonResponse
 from django.views import View
-from customers.models import Customer
+from customers.models import Customer, Address
 from website.models import Product
 from django.shortcuts import redirect, render
 from django.shortcuts import get_object_or_404
@@ -15,11 +15,12 @@ class AddToCartView(View):
     # add products to cart ---> cookies ->Unpaid
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
-        product_id = data.get('product_id')
+        product_id = str(data.get('product_id'))
 
         if request.user.is_authenticated:
             customer = get_object_or_404(Customer, pk=request.user.pk)
-            order, created = Order.objects.get_or_create(customer=customer, state=Order.STATE.UNPAID)
+            order, created = Order.objects.get_or_create(customer=customer, address=customer.addresses.first(),
+                                                         state=Order.STATE.UNPAID)
 
             product = get_object_or_404(Product, pk=product_id)
             order_item, item_created = OrderItem.objects.get_or_create(
@@ -50,51 +51,44 @@ class AddToCartView(View):
             response = JsonResponse(response_data)
             response.set_cookie('cart', json.dumps(cart))
         return response
+        # TODO cart:""{\"3\": 1\054 \"2\": 1\054 \"1\": 7\054 \"4\": 1}"" encode and decode octal sequence
 
 
 class CheckoutView(View):
-    # change unpaid order be paid order for logged in user
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            customer = Customer.objects.get(pk=request.user.pk)
+            customer = get_object_or_404(Customer, pk=request.user.pk)
             order = Order.objects.filter(customer=customer, state=Order.STATE.UNPAID).first()
             order_items = OrderItem.objects.filter(order=order) if order else []
+            addresses = Address.objects.filter(customer=customer)
             context = {
                 'order': order,
                 'order_items': order_items,
+                'addresses': addresses,
             }
             return render(request, 'orders/order.html', context)
         else:
             return redirect('accounts:login')
 
     def post(self, request, *args, **kwargs):
-        # if request.user.is_authenticated:
-        #     customer = get_object_or_404(Customer, pk=request.user.pk)
-        #     order = Order.objects.filter(customer=customer, state=Order.STATE.UNPAID).first()
-        #     if order:
-        #         order.state = Order.STATE.PAID
-        #         order.save()
-        #         return redirect('orders:checkout')
-        #     else:
-        #         return redirect('orders:checkout')
-        # else:
-        #     return redirect('accounts:login')
         if request.user.is_authenticated:
             customer = get_object_or_404(Customer, pk=request.user.pk)
             order = Order.objects.filter(customer=customer, state=Order.STATE.UNPAID).first()
 
             if order:
-                order_items = OrderItem.objects.filter(order=order)
-                if order_items:
-                    order.state = Order.STATE.PAID
-                    order.save()
-                    messages.success(request, "سفارش با موفقیت ثبت شد")
+                selected_address = handle_address_selection_or_creation(request, customer, order)
+
+                if not selected_address:
                     return redirect('orders:checkout')
-                else:
-                    messages.error(request, "هیچ محصولی در کارت شما نیست")
-                    return redirect('orders:checkout')
+
+                order.address = selected_address
+                order.state = Order.STATE.PAID
+                order.save()
+
+                messages.success(request, "Order successfully placed")
+                return redirect('orders:checkout')
             else:
-                messages.error(request, "هیچ سفارشی موجود نیست لطفا برید صفحه اصلی انتخاب کنید")
+                messages.error(request, "No unpaid order found.")
                 return redirect('orders:checkout')
         else:
             return redirect('accounts:login')
@@ -164,3 +158,34 @@ class DeleteOrderItemView(View):
             })
         except OrderItem.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Item not found'})
+
+
+def handle_address_selection_or_creation(request, customer, order):
+    address_id = request.POST.get('address')
+    if address_id == 'new':
+        address_data = request.POST.get('new_address', '')
+        if address_data:
+            try:
+                street, city, state, zip_code = address_data.split(',', 3)
+                zip_code = zip_code.strip()
+                if len(zip_code) != 10:
+                    messages.error(request, "Zip Code must be exactly 10 characters long.")
+                    return None
+                address = Address.objects.create(
+                    street=street.strip(),
+                    city=city.strip(),
+                    state=state.strip(),
+                    zip_code=zip_code,
+                    customer=customer
+                )
+                customer.default_address = address
+                customer.save()
+                return address
+            except ValueError:
+                messages.error(request, "Invalid address format. Please use 'Street, City, State, Zip Code'.")
+                return None
+        else:
+            messages.error(request, "Address field cannot be empty.")
+            return None
+    else:
+        return get_object_or_404(Address, pk=address_id)

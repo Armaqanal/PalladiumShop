@@ -11,7 +11,7 @@ from django.db.models.signals import pre_save, post_delete, post_save
 from django.dispatch import receiver
 
 
-class DateFieldsMixin(models.Model): #TODO
+class DateFieldsMixin(models.Model):  # TODO
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="تاریخ ویرایش")
 
@@ -20,7 +20,6 @@ class DateFieldsMixin(models.Model): #TODO
 
 
 class User(AbstractUser):
-
     class Gender(models.TextChoices):
         MALE = "M", "مرد"
         FEMALE = "F", "زن"
@@ -129,7 +128,6 @@ class Customer(User):
 class Address(models.Model):
     customer = models.ForeignKey(
         Customer, on_delete=models.CASCADE, related_name='addresses')
-
     street = models.CharField(max_length=10, verbose_name="خیابان")
     city = models.CharField(max_length=100, verbose_name="شهر")
     state = models.CharField(max_length=50, verbose_name="ایالت")
@@ -137,6 +135,8 @@ class Address(models.Model):
         max_length=10,
         blank=True,
         validators=[MinLengthValidator(10), MaxLengthValidator(10)], verbose_name="کد پستی")
+
+    # TODO:Add validators for zib code and phone number
 
     class Meta:
         verbose_name = "آدرس"
