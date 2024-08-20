@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
@@ -27,7 +26,7 @@ class HomeView(TemplateView):
 
 
 class PalladiumLoginView(LoginView):
-    template_name = 'accounts/login.html'
+    template_name = 'accounts/login/index.html'
     authentication_form = LoginForm
     redirect_authenticated_user = True
 
@@ -42,7 +41,8 @@ class PalladiumLoginView(LoginView):
         if cart:
             try:
                 customer = Customer.objects.get(pk=self.request.user.pk)
-                order = Order.objects.create(customer=customer,address=customer.addresses.first(), state=Order.STATE.UNPAID)
+                order = Order.objects.create(customer=customer, address=customer.addresses.first(),
+                                             state=Order.STATE.UNPAID)
                 for product_id, quantity in cart.items():
                     product = get_object_or_404(Product, pk=product_id)
                     OrderItem.objects.create(
@@ -78,4 +78,3 @@ class PalladiumOwnerRegisterView(CreateView):
     form_class = OwnerRegistrationForm
     success_url = reverse_lazy('accounts:login')
     template_name = 'accounts/register-vendor.html'
-
