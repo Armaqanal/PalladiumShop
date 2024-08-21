@@ -10,7 +10,6 @@ from django.dispatch import receiver
 from vendors.models import Company
 from django.utils.text import slugify
 from django.urls import reverse_lazy
-
 from website.manager import ApprovedCommentManager
 
 User = get_user_model()
