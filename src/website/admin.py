@@ -11,7 +11,7 @@ class CategoryAdmin(admin.ModelAdmin):
 admin.site.register(Category, CategoryAdmin)
 
 
-# Discount Admin Configuration
+
 class DiscountAdmin(admin.ModelAdmin):
     list_display = ('percent', 'amount', 'start_date', 'end_date')
     list_filter = ('start_date', 'end_date')

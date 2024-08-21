@@ -16,9 +16,10 @@ class VendorProfileView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         vendor = get_object_or_404(Vendor, id=self.request.user.id)
         context['vendor'] = vendor
-        context['company'] = vendor.companies.first()
+        context['company'] = vendor.company
         context['role'] = vendor.role
         return context
+
 
 
 class VendorEditProfileView(LoginRequiredMixin, View):

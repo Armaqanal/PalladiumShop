@@ -83,128 +83,107 @@
 {% endblock banner %}
 <!-- end banner section -->
 
-
-
 {% block content %}
-
-    <br>
-    <br>
-    <br>
-
+    <br><br><br>
     <div class="container" style="font-family: Tahoma, sans-serif; text-align: right;">
         <div class="main-body mb-3">
             <div class="row gutters-sm">
                 <div class="col-md-12">
                     <div class="row">
                         <div class="col-md-8">
-                            <form method="post" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                {% if form.errors %}
-                                    <div class="form-errors"
-                                         style="font-family: Tahoma, serif; text-align: right; margin-bottom: 1rem;">
-                                        {% for field in form %}
-                                            {% for error in field.errors %}
-                                                <div class="alert alert-danger">{{ error }}</div>
-                                            {% endfor %}
-                                        {% endfor %}
-                                        {% for error in form.non_field_errors %}
-                                            <div class="alert alert-danger">{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="card" style="height: auto;">
-                                            <div class="card-body"
-                                                 style="font-family: Tahoma, serif; text-align: right;">
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <h6 class="mb-0">اسم محصول</h6>
-                                                    </div>
-                                                    <div class="col-sm-12 text-secondary">
-                                                        {{ form.name }}
-                                                    </div>
-                                                </div>
-                                                <hr>
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <h6 class="mb-0">قیمت محصول</h6>
-                                                    </div>
-                                                    <div class="col-sm-12 text-secondary">
-                                                        {{ form.price }}
-                                                    </div>
-                                                </div>
-                                                <hr>
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <h6 class="mb-0">انبار</h6>
-                                                    </div>
-                                                    <div class="col-sm-12 text-secondary">
-                                                        {{ form.inventory }}
-                                                    </div>
-                                                </div>
-                                                <hr>
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <h6 class="mb-0">تخفیف</h6>
-                                                    </div>
-                                                    <div class="col-sm-12 text-secondary">
-                                                        {{ form.discount }}
-                                                    </div>
-                                                </div>
-                                                <hr>
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <h6 class="mb-0">دسته‌بندی</h6>
-                                                    </div>
-                                                    <div class="col-sm-12 text-secondary">
-                                                        {{ form.category }}
-                                                    </div>
-                                                </div>
-                                                <hr>
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <h6 class="mb-0">توضیحات</h6>
-                                                    </div>
-                                                    <div class="col-sm-12 text-secondary">
-                                                        {{ form.description }}
-                                                    </div>
-                                                </div>
-                                                <hr>
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <fieldset>
-                                                            <legend>تخفیف</legend>
-                                                            {{ discount.as_p }}
-                                                        </fieldset>
-                                                    </div>
-                                                </div>
-                                                <hr>
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <fieldset>
-                                                            <legend>تصاویر محصول</legend>
-                                                            {{ images_form.images.label_tag }}<br>
-                                                            {{ images_form.images }}
-                                                        </fieldset>
-                                                    </div>
-                                                </div>
-                                                <hr>
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail"
-                                                                style="font-family: Tahoma, sans-serif;">
-                                                            ذخیره
-                                                        </button>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col" class="text-right">نام محصول</th>
+                                    <th scope="col" class="text-right">دسته‌بندی</th>
+                                    <th scope="col" class="text-right">قیمت</th>
+                                    <th scope="col" class="text-right">تخفیف</th>
+                                    <th scope="col" class="text-right">ویرایش</th>
+                                    <th scope="col" class="text-right">حذف</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for product in products %}
+                                    <tr>
+                                        <td>{{ product.name }}</td>
+                                        <td>{{ product.category.name }}</td>
+                                        <td>{{ product.price }}</td>
+                                        <td>
+                                            {% if product.discount %}
+                                                {{ product.discount.percent }}%
+                                            {% else %}
+                                                بدون تخفیف
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'website:product-update' product.pk %}"
+                                               >
+                                                <img src="{% static 'website/images/icons/edit.png' %}" alt="Edit" width="24" height="24">
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <!-- Delete Button Trigger Modal -->
+                                            <button class="px-2 btn btn-link" title="حذف" data-toggle="modal"
+                                                    data-target="#deleteModal{{ product.id }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                                     viewBox="0 0 24 24">
+                                                    <path fill="none" stroke="red" stroke-linecap="round"
+                                                          stroke-linejoin="round" stroke-width="1.5"
+                                                          d="m19.5 5.5l-.402 6.506M4.5 5.5l.605 10.025c.154 2.567.232 3.85.874 4.774c.317.456.726.842 1.2 1.131c.671.41 1.502.533 2.821.57m10-7l-7 7m7 0l-7-7M3 5.5h18m-4.944 0l-.683-1.408c-.453-.936-.68-1.403-1.071-1.695a2 2 0 0 0-.275-.172C13.594 2 13.074 2 12.035 2c-1.066 0-1.599 0-2.04.234a2 2 0 0 0-.278.18c-.395.303-.616.788-1.058 1.757L8.053 5.5"
+                                                          color="currentColor"></path>
+                                                </svg>
+                                            </button>
+
+                                            <!-- Modal -->
+                                            <div id="deleteModal{{ product.id }}" class="modal fade" tabindex="-1"
+                                                 role="dialog" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content border-0">
+                                                        <div class="modal-body p-0">
+                                                            <div class="card border-0 p-sm-3 p-2 justify-content-center">
+                                                                <div class="card-header pb-0 bg-white border-0">
+                                                                    <div class="row">
+                                                                        <div class="col ml-auto">
+                                                                            <button type="button" class="close"
+                                                                                    data-dismiss="modal"
+                                                                                    aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <p class="font-weight-bold mb-2">آیا مطمئن هستید که
+                                                                        می‌خواهید این محصول را حذف کنید؟</p>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <form method="post"
+                                                                          action="{% url 'website:product-delete' product.pk %}">
+                                                                        {% csrf_token %}
+                                                                        <div class="row justify-content-end no-gutters">
+                                                                            <div class="col-auto">
+                                                                                <button type="button"
+                                                                                        class="btn btn-light text-muted"
+                                                                                        data-dismiss="modal">لغو
+                                                                                </button>
+                                                                                <button type="submit"
+                                                                                        class="btn btn-danger px-4">
+                                                                                    حذف
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
+
                         <div class="col-md-4">
                             <div class="card" style="height: auto;">
                                 <div class="card-body">
@@ -258,6 +237,7 @@
                                                    href="{% url 'website:product-summary' %}">ویرایش یا حذف</a>
                                                 <a class="list-group-item list-group-item-action"
                                                    href="{% url 'website:product-add' %}">اضافه کردن</a>
+
                                             </div>
                                         </div>
                                     </div>
@@ -269,11 +249,14 @@
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    <br>
-    <br>
-
+    <br><br>
 {% endblock content %}
+
+
+
+
 
 

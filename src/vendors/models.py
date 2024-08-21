@@ -11,7 +11,7 @@ from django.utils.text import slugify
 class Company(DateFieldsMixin, models.Model):
     name = models.CharField(max_length=100, unique=True, verbose_name="شرکت")
     address = models.CharField(max_length=200, verbose_name="آدرس")
-    vendors = models.ForeignKey('Vendor', on_delete=models.CASCADE, verbose_name="فروشندگان", related_name="companies")
+    # vendors = models.ForeignKey('Vendor', on_delete=models.CASCADE, verbose_name="فروشندگان", related_name="companies")
     slug = models.SlugField(max_length=100, blank=True, null=True, allow_unicode=True)
     rating_count = models.IntegerField(default=0)
     sum_rating = models.IntegerField(default=0)
@@ -67,6 +67,7 @@ def update_company_rating_on_delete(sender, instance, **kwargs):
 
 
 class Vendor(User):
+    company = models.ForeignKey('Company', on_delete=models.CASCADE, related_name='vendors')
     class Roles(models.TextChoices):
         OWNER = "OWNER", "مدیر فروشگاه"
         MANAGER = "MANAGER", "مدیر محصول"

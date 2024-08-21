@@ -3,11 +3,17 @@ from django import forms
 
 
 class ProductImageForm(forms.ModelForm):
-    images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
-
     class Meta:
         model = ProductImage
         fields = ['image']
+        widgets = {
+            'image': forms.ClearableFileInput(attrs={'multiple': True}),
+        }
+
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['image'].required = False
+
 
 class CommentForm(forms.ModelForm):
     class Meta:
@@ -18,7 +24,7 @@ class CommentForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        exclude = ['created_at', 'updated_at', 'slug', 'company','rating_count','sum_rating','average_rating']
+        exclude = ['created_at', 'updated_at', 'slug', 'company', 'rating_count', 'sum_rating', 'average_rating']
         widgets = {
             'description': forms.Textarea(),
         }
@@ -28,3 +34,8 @@ class DiscountForm(forms.ModelForm):
     class Meta:
         model = Discount
         fields = '__all__'
+
+# class ProductSummeryForm(forms.model):
+#     class Meta:
+#         model = Product
+#         include=['name','category','price','discount']

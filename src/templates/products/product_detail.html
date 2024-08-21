@@ -21,9 +21,13 @@
                                style="font-family: Tahoma, sans-serif;">
                                 حساب من
                             </a>
+                        {% elif request.user.is_staff %}
+                            <a href="{% url 'vendors:profile' %}" class="flex-c-m trans-04 p-lr-25"
+                               style="font-family: Tahoma, sans-serif;">
+                                پنل فروشنده
+                            </a>
                         {% endif %}
                     {% endif %}
-
                     <a href="#" class="flex-c-m trans-04 p-lr-25">
                         EN
                     </a>

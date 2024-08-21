@@ -1,3 +1,4 @@
+from django.db.models.query import QuerySet
 from django.views.generic import (
     ListView,
     DetailView,
@@ -11,7 +12,7 @@ from website.forms import CommentForm, ProductForm, ProductImageForm
 from website.models import Product, Comment, Category, ProductImage
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
-from vendors.models import Company
+from vendors.models import Company, Vendor
 from .forms import DiscountForm
 import json
 from django.http import JsonResponse
@@ -37,16 +38,16 @@ class ProductDetailView(DetailView):
         context['comments'] = Comment.approved.filter(product=product)
         return context
 
-    def post(self, request, *args, **kwargs):
-        cart = json.loads(request.COOKIES.get('cart', '{}'))
-        product_id = request.POST['product_id']
-        if product_id in cart:
-            cart[product_id] += 1
-        else:
-            cart[product_id] = 1
-        response = JsonResponse({'message': 'محصول به سبد خرید اضافه شد'})
-        response.set_cookie('cart', json.dumps(cart))
-        return response
+    # def post(self, request, *args, **kwargs):
+    #     cart = json.loads(request.COOKIES.get('cart', '{}'))
+    #     product_id = request.POST['product_id']
+    #     if product_id in cart:
+    #         cart[product_id] += 1
+    #     else:
+    #         cart[product_id] = 1
+    #     response = JsonResponse({'message': 'محصول به سبد خرید اضافه شد'})
+    #     response.set_cookie('cart', json.dumps(cart))
+    #     return response
 
 
 class ProductCreateView(CreateView):
@@ -92,6 +93,70 @@ class ProductCreateView(CreateView):
             return super().form_valid(form)
         else:
             return self.form_invalid(form)
+
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'products/product_update.html'
+    extra_context = {'action_type': 'Editing'}
+
+    def get_queryset(self):
+        vendor = self.request.user.vendor
+        company = vendor.company
+        return Product.objects.filter(company=company)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['discount'] = DiscountForm(self.request.POST, instance=self.object.discount)
+            context['images_form'] = ProductImageForm(self.request.POST, self.request.FILES, instance=self.object)
+        else:
+            context['discount'] = DiscountForm(instance=self.object.discount)
+            context['images_form'] = ProductImageForm(instance=self.object)
+            context['existing_images'] = ProductImage.objects.filter(product=self.object)
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        discount = context['discount']
+        images_form = context['images_form']
+        if form.is_valid() and discount.is_valid() and images_form.is_valid():
+            self.object = form.save()
+            discount.save()
+            images_to_delete = self.request.POST.getlist('delete_images')
+            if images_to_delete:
+                ProductImage.objects.filter(id__in=images_to_delete).delete()
+            new_images = self.request.FILES.getlist('image')
+            for image in new_images:
+                ProductImage.objects.create(product=self.object, image=image)
+            return super().form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    success_url = reverse_lazy('website:product-summary')
+    template_name = 'products/product_table.html'
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        ProductImage.objects.filter(product=self.object).delete()
+        if self.object.discount:
+            self.object.discount.delete()
+        return super().delete(request, *args, **kwargs)
+
+
+class ProductSummaryListView(ListView):
+    model = Product
+    template_name = 'products/product_table.html'
+    context_object_name = 'products'
+
+    def get_queryset(self):
+        vendor = self.request.user.vendor
+        company = vendor.company
+        return Product.objects.filter(company=company)
 
 
 class CustomerCommentsListView(LoginRequiredMixin, ListView):

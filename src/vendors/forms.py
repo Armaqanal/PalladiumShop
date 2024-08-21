@@ -42,11 +42,12 @@ class OwnerRegistrationForm(UserCreationForm):
             vendor.save()
             company_name = self.cleaned_data.get('company_name')
             company_address = self.cleaned_data.get('company_address')
-            Company.objects.create(
+            company = Company.objects.create(
                 name=company_name,
-                address=company_address,
-                vendors=vendor
+                address=company_address
             )
+            vendor.company = company
+            vendor.save()
         return vendor
 
     class Meta:
@@ -54,6 +55,7 @@ class OwnerRegistrationForm(UserCreationForm):
         fields = ['username', 'email', 'phone', 'password1', 'password2', 'photo', 'first_name', 'last_name',
                   'date_of_birth', 'gender', 'company_name', 'company_address']
         widgets = {'date_of_birth': DateInput}
+
 
 
 class CompanyCreationForm(forms.ModelForm):
@@ -84,15 +86,19 @@ class VendorsChangeForm(forms.ModelForm):
             'class': 'form-control'
         })
         self.fields['date_of_birth'].widget.attrs.update({
-            'class': 'form-control ',
+            'class': 'form-control',
+        })
+        self.fields['company'].widget.attrs.update({
+            'class': 'form-control'
         })
 
     class Meta:
         model = Vendor
-        fields = ['email', 'phone', 'first_name', 'last_name', 'gender', 'photo', 'date_of_birth']
+        fields = ['email', 'phone', 'first_name', 'last_name', 'gender', 'photo', 'date_of_birth', 'company']
         widgets = {
             'date_of_birth': DateInput
         }
+
 
 # class OwnerCreationForm(UserCreationForm):
 #     class Meta:

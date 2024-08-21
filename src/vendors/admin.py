@@ -27,7 +27,7 @@ class VendorAdmin(PalladiumUserAdmin):
             "fields": ("username", "email", "phone", "password1", "password2")
         }),
         ('Personal Info', {
-            "fields": ("first_name", "last_name", "gender", "date_of_birth", "photo")
+            "fields": ("first_name", "last_name", "gender", "date_of_birth", "photo","company","role")
         }),
         ("Permissions", {
             "fields": ("is_superuser", "is_staff", "is_active", "groups", "user_permissions")

@@ -1,5 +1,4 @@
 import os
-
 from django.db import models
 from django.utils import timezone
 from customers.models import DateFieldsMixin
@@ -128,11 +127,6 @@ class Product(DateFieldsMixin, models.Model):
     #     return reverse('category-detail', kwargs={'slug': self.slug})
 
 
-@receiver(post_delete, sender=Product)
-def delete_product_image(sender, instance: Product, **kwargs):
-    if instance.image:
-        if os.path.isfile(instance.image.path):
-            os.remove(instance.image.path)
 
 
 class ProductRating(DateFieldsMixin, models.Model):
@@ -205,3 +199,9 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f"{self.product.name} Image"
+
+@receiver(post_delete, sender=ProductImage)
+def delete_product_image(sender, instance: ProductImage, **kwargs):
+    if instance.image:
+        if os.path.isfile(instance.image.path):
+            os.remove(instance.image.path)
