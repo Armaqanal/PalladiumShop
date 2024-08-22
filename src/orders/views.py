@@ -85,10 +85,10 @@ class CheckoutView(View):
                 order.state = Order.STATE.PAID
                 order.save()
 
-                messages.success(request, "Order successfully placed")
+                messages.success(request, "سفارش با موفقیت ثبت شد")
                 return redirect('orders:checkout')
             else:
-                messages.error(request, "No unpaid order found.")
+                messages.error(request, "سفارش پرداختی وجود ندارد.")
                 return redirect('orders:checkout')
         else:
             return redirect('accounts:login')
@@ -133,7 +133,7 @@ class UpdateQuantityView(View):
             return JsonResponse({'success': True, 'updated_subtotal': updated_subtotal,
                                  'updated_total_cost': updated_total_cost})
         except OrderItem.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Order item not found'})
+            return JsonResponse({'success': False, 'error': 'محصولی پیدا نشد'})
 
 
 class DeleteOrderItemView(View):
@@ -169,7 +169,7 @@ def handle_address_selection_or_creation(request, customer, order):
                 street, city, state, zip_code = address_data.split(',', 3)
                 zip_code = zip_code.strip()
                 if len(zip_code) != 10:
-                    messages.error(request, "Zip Code must be exactly 10 characters long.")
+                    messages.error(request, "کدپستی حداقل باید 10 کارکتر باشه")
                     return None
                 address = Address.objects.create(
                     street=street.strip(),
@@ -182,10 +182,10 @@ def handle_address_selection_or_creation(request, customer, order):
                 customer.save()
                 return address
             except ValueError:
-                messages.error(request, "Invalid address format. Please use 'Street, City, State, Zip Code'.")
+                messages.error(request, "لطفا با فرمت درست وارد کنید آدرس را شهر , استان , کوچه , کدپستی")
                 return None
         else:
-            messages.error(request, "Address field cannot be empty.")
+            messages.error(request, "قسمت آدرس نمیتونه خالی باشه")
             return None
     else:
         return get_object_or_404(Address, pk=address_id)

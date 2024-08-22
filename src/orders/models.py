@@ -15,7 +15,9 @@ class Order(DateFieldsMixin, models.Model):
     state = models.CharField(max_length=20, choices=STATE.choices, default=STATE.UNPAID)
     total_cost = models.PositiveBigIntegerField(default=0)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    address = models.ForeignKey(Address, on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True, blank=True)
+
+    # TODO beacuse customer dont add address in the registration form
 
     def grand_total(self):
         self.total_cost = self.order_items.aggregate(

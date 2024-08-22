@@ -86,7 +86,7 @@ class ProductCreateView(CreateView):
             discount.instance = self.object
             discount.save()
 
-            images = self.request.FILES.getlist('images')
+            images = self.request.FILES.getlist('image')
             for image in images:
                 ProductImage.objects.create(product=self.object, image=image)
 

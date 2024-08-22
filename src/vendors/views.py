@@ -6,7 +6,7 @@ from .forms import VendorsChangeForm
 from .models import Vendor, Company
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
-from django.views import generic, View
+from django.views import View
 
 
 class VendorProfileView(LoginRequiredMixin, TemplateView):
