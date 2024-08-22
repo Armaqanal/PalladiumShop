@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404
 
 from .forms import VendorsChangeForm
-from .models import Vendor, Company
+from .models import Vendor
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.views import View
