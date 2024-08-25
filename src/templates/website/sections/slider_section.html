@@ -1,83 +1,142 @@
 {% load static %}
 
-<!-- Slider -->
-<section class="section-slide">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Slider Example</title>
+
+    <!-- Slick Carousel CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Slider Styles */
+        #first-slider {
+            position: relative;
+        }
+
+        #first-slider .item-slick1 {
+            background-size: cover;
+            background-position: center;
+            height: 500px;
+            position: relative;
+        }
+
+        #first-slider .ltext-101, #first-slider .ltext-201 {
+            color: #fff;
+        }
+
+        #first-slider .ltext-101 {
+            font-size: 2em;
+        }
+
+        #first-slider .ltext-201 {
+            font-size: 3em;
+        }
+
+        #first-slider .flex-c-m a {
+            background-color: #000;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        @media screen and (max-width: 800px) {
+            #first-slider .ltext-101, #first-slider .ltext-201 {
+                font-size: 1.5em;
+            }
+
+            #first-slider .flex-c-m a {
+                padding: 8px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- First Slider Section -->
+<div id="first-slider" class="section-slide">
     <div class="wrap-slick1">
         <div class="slick1">
-            <div class="item-slick1" style="background-image: url({% static 'website/images/slide-01.jpg' %});">
+            <div class="item-slick1"
+                 style="background-image: url({% static 'website/images/slide-01.jpg' %});">
                 <div class="container h-full">
-                    <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+                    <div class="flex-col-l-m h-full p-t-100 p-b-30">
                         <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
-                            <span class="ltext-101 cl2 respon2">
-                                Women Collection 2018
-                            </span>
+                            <span class="ltext-101">Women Collection 2018</span>
                         </div>
-
                         <div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
-                            <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
-                                NEW SEASON
-                            </h2>
+                            <h2 class="ltext-201">NEW SEASON</h2>
                         </div>
-
-                        <div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
-                            <a href="product.html"
-                               class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
-                                Shop Now
-                            </a>
-                        </div>
+{#                        <div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">#}
+{#                            <a href="product.html" class="flex-c-m stext-101">Shop Now</a>#}
+{#                        </div>#}
                     </div>
                 </div>
             </div>
-
-            <div class="item-slick1" style="background-image: url({% static 'website/images/slide-02.jpg' %});">
+            <div class="item-slick1"
+                 style="background-image: url({% static 'website/images/slide-02.jpg' %});">
                 <div class="container h-full">
-                    <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+                    <div class="flex-col-l-m h-full p-t-100 p-b-30">
                         <div class="layer-slick1 animated visible-false" data-appear="rollIn" data-delay="0">
-                            <span class="ltext-101 cl2 respon2">
-                                Men New-Season
-                            </span>
+                            <span class="ltext-101">Men New-Season</span>
                         </div>
-
                         <div class="layer-slick1 animated visible-false" data-appear="lightSpeedIn" data-delay="800">
-                            <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
-                                Jackets & Coats
-                            </h2>
+                            <h2 class="ltext-201">Jackets & Coats</h2>
                         </div>
-
-                        <div class="layer-slick1 animated visible-false" data-appear="slideInUp" data-delay="1600">
-                            <a href="product.html"
-                               class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
-                                Shop Now
-                            </a>
-                        </div>
+{#                        <div class="layer-slick1 animated visible-false" data-appear="slideInUp" data-delay="1600">#}
+{#                            <a href="product.html" class="flex-c-m stext-101">Shop Now</a>#}
+{#                        </div>#}
                     </div>
                 </div>
             </div>
-
-            <div class="item-slick1" style="background-image: url({% static 'website/images/slide-03.jpg' %});">
+            <div class="item-slick1"
+                 style="background-image: url({% static 'website/images/slide-03.jpg' %});">
                 <div class="container h-full">
-                    <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+                    <div class="flex-col-l-m h-full p-t-100 p-b-30">
                         <div class="layer-slick1 animated visible-false" data-appear="rotateInDownLeft" data-delay="0">
-                            <span class="ltext-101 cl2 respon2">
-                                Men Collection 2018
-                            </span>
+                            <span class="ltext-101">Men Collection 2018</span>
                         </div>
-
                         <div class="layer-slick1 animated visible-false" data-appear="rotateInUpRight" data-delay="800">
-                            <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
-                                New arrivals
-                            </h2>
+                            <h2 class="ltext-201">New arrivals</h2>
                         </div>
-
-                        <div class="layer-slick1 animated visible-false" data-appear="rotateIn" data-delay="1600">
-                            <a href="product.html"
-                               class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
-                                Shop Now
-                            </a>
-                        </div>
+{#                        <div class="layer-slick1 animated visible-false" data-appear="rotateIn" data-delay="1600">#}
+{#                            <a href="product.html" class="flex-c-m stext-101">Shop Now</a>#}
+{#                        </div>#}
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</section>
+</div>
+
+<!-- Slick Carousel JavaScript -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#first-slider .slick1').slick({
+            dots: true,
+            infinite: true,
+            speed: 500,
+            fade: true,
+            cssEase: 'linear'
+        });
+    });
+</script>
+</body>
+</html>

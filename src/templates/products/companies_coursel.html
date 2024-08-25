@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoped Carousel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+    <style>
+        html {
+            box-sizing: border-box;
+        }
+
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+
+        /* Scoped styles for carousel */
+        #second-slider .custom-coursel img {
+            width: 50%;
+            height: auto;
+            padding: 5px;
+        }
+
+        #second-slider .custom-coursel .slick-dots {
+            text-align: center;
+            margin: 0 0 10px 0;
+            padding: 0;
+        }
+
+        #second-slider .custom-coursel .slick-dots li {
+            display: inline-block;
+            margin-left: 4px;
+            margin-right: 4px;
+        }
+
+        #second-slider .custom-coursel .slick-dots li.slick-active button {
+            background-color: black;
+        }
+
+        #second-slider .custom-coursel .slick-dots button {
+            font: 0/0 a;
+            text-shadow: none;
+            color: transparent;
+            background-color: #999;
+            border: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+        }
+
+        #second-slider .custom-coursel .slick-dots button:hover {
+            background-color: black;
+        }
+
+        #second-slider .custom-coursel .prev, #second-slider .custom-coursel .next {
+            color: #999;
+            position: absolute;
+            top: 38%;
+            font-size: 1.5em;
+        }
+
+        #second-slider .custom-coursel .prev {
+            left: -2em;
+        }
+
+        #second-slider .custom-coursel .next {
+            right: -2em;
+        }
+
+        #second-slider .custom-coursel .prev:hover, #second-slider .custom-coursel .next:hover {
+            cursor: pointer;
+            color: black;
+        }
+
+        @media screen and (max-width: 800px) {
+            #second-slider .custom-coursel .next {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Scoped Carousel Section -->
+<div id="second-slider" class="container">
+<div class="p-b-10">
+                <h4 style="font-family: Tahoma, sans-serif;">شرکت ها
+                </h4>
+            </div>
+<hr>
+    <div class="row">
+        <div class="col-md-12 heroSlider-fixed custom-coursel">
+            <div class="overlay"></div>
+            <!-- Slider -->
+            <div class="slider responsive">
+                {% for company in companies %}
+                    {% if company.logo %}
+                        <a href="{% url 'website:product-list' %}?company={{ company.name }}">
+                            <div><img src="{{ company.logo.url }}" alt="{{ company.name }}"></div>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'website:product-list' %}?company={{ company.name }}">
+                            <div><img src="http://placehold.it/200x150" alt="Placeholder Image"/></div>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <!-- Control arrows -->
+            <div class="prev">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+            </div>
+            <div class="next">
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Second Slider -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#second-slider .custom-coursel .responsive').slick({
+            dots: true,
+            prevArrow: $('#second-slider .custom-coursel .prev'),
+            nextArrow: $('#second-slider .custom-coursel .next'),
+            infinite: false,
+            speed: 300,
+            slidesToShow: 4,
+            slidesToScroll: 4,
+            responsive: [
+                {
+                    breakpoint: 1024,
+                    settings: {
+                        slidesToShow: 3,
+                        slidesToScroll: 3,
+                        infinite: true,
+                        dots: true
+                    }
+                },
+                {
+                    breakpoint: 600,
+                    settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 2
+                    }
+                },
+                {
+                    breakpoint: 480,
+                    settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1
+                    }
+                }
+            ]
+        });
+    });
+</script>
+
+</body>
+</html>

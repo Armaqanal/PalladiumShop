@@ -1,5 +1,6 @@
 import os
 from django.db import models
+from django.db.models import Count
 from django.utils import timezone
 from customers.models import DateFieldsMixin
 from django.core.validators import (MinLengthValidator, MaxLengthValidator,
@@ -124,14 +125,14 @@ class Product(DateFieldsMixin, models.Model):
 
     # def get_absolute_url(self):
     #     return reverse('category-detail', kwargs={'slug': self.slug})
-
-
+    def __str__(self):
+        return self.name
 
 
 class ProductRating(DateFieldsMixin, models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='ratings')
-    rating = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(5)])
+    rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
 
     class Meta:
         unique_together = ('product', 'user')
@@ -198,6 +199,7 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f"{self.product.name} Image"
+
 
 @receiver(post_delete, sender=ProductImage)
 def delete_product_image(sender, instance: ProductImage, **kwargs):

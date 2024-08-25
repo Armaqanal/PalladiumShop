@@ -84,8 +84,9 @@
 <!-- end banner section -->
 
 {% block content %}
-
+    {% include 'website/sections/message_display.html' %}
     <br><br><br>
+
 
     <div class="container" style="font-family: Tahoma, sans-serif; text-align: right;">
         <div class="main-body mb-3">
@@ -95,65 +96,50 @@
                     <div class="row">
 
                         <!-- Profile Details -->
-                        <div class="col-md-7">
-                            <div class="card" style="height: 100%">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <h6 class="mb-0">اسم کامل</h6>
-                                        </div>
-                                        <div class="col-sm-9 text-secondary">
-                                            {{ request.user.first_name }} {{ request.user.last_name }}
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <h6 class="mb-0">ایمیل</h6>
-                                        </div>
-                                        <div class="col-sm-9 text-secondary">
-                                            {{ request.user.email }}
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <h6 class="mb-0">شماره تلفن</h6>
-                                        </div>
-                                        <div class="col-sm-9 text-secondary">
-                                            {{ request.user.phone }}
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <h6 class="mb-0">آدرس</h6>
-                                        </div>
-                                        {% if address %}
-                                            <div class="col-sm-9 text-secondary">
-                                                <p>{{ address.street }}, {{ address.city }}, {{ address.state }}, {{ address.zip_code }}</p>
-                                            </div>
-                                        {% else %}
-                                            <div class="col-sm-9 text-secondary">
-                                                <p>آدرس موجود نیست</p>
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                    <hr>
-                                    {% block extera_profile_data %} {% endblock %}
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <h6 class="mb-0">تاریخ ورود</h6>
-                                        </div>
-                                        <div class="col-sm-9 text-secondary">
-                                            {{ request.user.date_joined|date }}
-                                        </div>
-                                    </div>
-                                    <hr>
+                        <div class="col-md-7" style="font-family: Tahoma;">
+                            <div class="col-md-12">
+                                <div class="page-header">
+                                    <h3>
+                                        <small class="pull-right">تعداد نظرات شما: {{ total_comments }}</small>
+                                    </h3>
                                 </div>
+                                <br><br><br>
+                                {% for comment in comments %}
+                                    <div class="comments-list">
+                                        <div class="media" style="border-bottom: 1px dotted #ccc;">
+                                            <p class="pull-right"><h6>{{ comment.get_state_display }}</h6>
+
+                                            {% if request.user.photo %}
+                                                <img class="media-left" src="{{ request.user.photo.url }}" alt="photo"
+                                                     width="25">
+                                            {% else %}
+                                                <img class="media-left" src="{% static 'defualt/defualt.jpg' %}"
+                                                     alt="static" width="25">
+                                            {% endif %}
+
+                                            <div class="media-body">
+                                                <h4 class="media-heading user_name"
+                                                    style="font-size: 14px; font-weight: bold;">
+                                                    {{ comment.product }}
+                                                </h4>
+                                                <br>
+                                                {{ comment.text }}
+                                                <br>
+                                                <form method="post" class="delete"
+                                                      action="{% url 'website:comment-delete' comment.pk %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn-delete">
+                                                        <img src="{% static 'website/images/icons/icons8-delete-20.png' %}"
+                                                             alt="Delete">
+                                                    </button>
+                                                </form>
+                                                <br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
                             </div>
                         </div>
-
                         <!-- Profile Photo and Sidebar -->
                         <div class="col-md-4">
                             <div class="card" style="height: 100%">
@@ -187,7 +173,7 @@
                                             <img src="{% static 'website/images/icons/user.png' %}" alt="Icon"
                                                  class="icon">
                                         </a>
-                                         <a class="list-group-item list-group-item-action" id="list-profile-list"
+                                        <a class="list-group-item list-group-item-action" id="list-profile-list"
                                            href="{% url 'customers:profile-edit' %}" role="tab"
                                            aria-controls="list-profile">تاریخچه سفارشات
                                             <img src="{% static 'website/images/icons/user.png' %}" alt="Icon"

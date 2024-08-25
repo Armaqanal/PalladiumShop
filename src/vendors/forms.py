@@ -97,17 +97,4 @@ class VendorsChangeForm(forms.ModelForm):
             'date_of_birth': DateInput
         }
 
-# class OwnerCreationForm(UserCreationForm):
-#     class Meta:
-#         model = Vendor
-#         fields = ['email']
 
-# class VendorCreationForm(UserCreationForm):
-#         class Meta:
-#             model = Vendor
-#             fields = '__all__'
-#
-# class VendorChangeForm(UserChangeForm):
-#         class Meta:
-#             model = Vendor
-#             fields = '__all__'

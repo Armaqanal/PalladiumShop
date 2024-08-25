@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', function () {
+// cart.js
+$(document).ready(function () {
     const csrftoken = getCookie('csrftoken');
     const cartIcon = $('#cart-icon');
 
@@ -15,26 +16,29 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+
     $('.productContainer button').on('click', function (e) {
-        const product_id = $(this).data('product');
+        e.stopPropagation();
+        const productId = $(this).data('product');
         const action = $(this).data('action');
-        addToCart(product_id, action);
+        addToCart(productId, action);
     });
 
-    function addToCart(product_id, action) {
+    function addToCart(productId, action) {
         $.ajax({
             url: '/orders/add/',
             type: 'POST',
             headers: {'X-CSRFToken': csrftoken},
-            data: JSON.stringify({product_id: product_id, action: action}),
+            data: JSON.stringify({product_id: productId, action: action}),
             contentType: 'application/json',
+            dataType: 'json',
             success: function (data) {
-                if (data.order_quantity !== undefined && cartIcon) {
+                if (data.order_quantity !== undefined) {
                     cartIcon.attr('data-notify', data.order_quantity);
                 }
             },
             error: function (xhr, status, error) {
-                console.error('There was a problem with the AJAX operation:', error);
+                console.error('AJAX Error:', status, error);
             }
         });
     }

@@ -17,6 +17,8 @@ from django.contrib.auth.views import LoginView
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 import json
+from django.shortcuts import redirect
+from django.urls import reverse
 
 User = get_user_model()
 
@@ -38,30 +40,50 @@ class PalladiumLoginView(LoginView):
     def form_valid(self, form):
         response = super().form_valid(form)
         cart = json.loads(self.request.COOKIES.get('cart', '{}'))
+
         if cart:
             try:
                 customer = Customer.objects.get(pk=self.request.user.pk)
-                order = Order.objects.create(customer=customer, address=customer.addresses.first(),
-                                             state=Order.STATE.UNPAID)
+                order, created = Order.objects.get_or_create(
+                    customer=customer,
+                    address=customer.addresses.first(),
+                    state=Order.STATE.UNPAID
+                )
+
                 for product_id, quantity in cart.items():
                     product = get_object_or_404(Product, pk=product_id)
-                    OrderItem.objects.create(
+                    order_item, created = OrderItem.objects.get_or_create(
                         order=order,
                         product=product,
-                        quantity=quantity,
-                        price=product.price,
-                        discounted_price=product.final_price
+                        defaults={
+                            'quantity': quantity,
+                            'price': product.price,
+                            'discounted_price': product.final_price
+                        }
                     )
+                    if not created:
+                        order_item.quantity += quantity
+                        order_item.save()
+
+
                 response.delete_cookie('cart')
+
+                return redirect(reverse('orders:checkout'))
             except ObjectDoesNotExist:
                 return JsonResponse({'message': 'Error creating order. Please try again later.'}, status=500)
 
         auth_login(self.request, self.request.user)
         return response
 
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        # Explicitly delete the cookie in the response
+        response.delete_cookie('cart')
+        return response
+
 
 class PalladiumLogoutView(LoginRequiredMixin, LogoutView):
-    next_page = reverse_lazy('accounts:home')
+    next_page = reverse_lazy('website:product-list')
     # next_page = redirect('/')
 
 

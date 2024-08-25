@@ -1,4 +1,4 @@
-from .models import ProductImage, Comment, Product, Discount
+from .models import ProductImage, Comment, Product, Discount, ProductRating
 from django import forms
 
 
@@ -9,10 +9,6 @@ class ProductImageForm(forms.ModelForm):
         widgets = {
             'image': forms.ClearableFileInput(attrs={'multiple': True}),
         }
-
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.fields['image'].required = False
 
 
 class CommentForm(forms.ModelForm):
@@ -35,7 +31,18 @@ class DiscountForm(forms.ModelForm):
         model = Discount
         fields = '__all__'
 
+
 # class ProductSummeryForm(forms.model):
 #     class Meta:
 #         model = Product
 #         include=['name','category','price','discount']
+
+
+class ProductRatingForm(forms.ModelForm):
+    class Meta:
+        model = ProductRating
+        fields = ['rating', 'product']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['product'].required = True

@@ -4,7 +4,7 @@ from customers.models import Customer, Address
 from website.models import Product
 from django.core.validators import MinValueValidator
 from django.db.models.functions import Coalesce
-from django.db.models import Sum, IntegerField, Value
+from django.db.models import Sum, Value
 
 
 class Order(DateFieldsMixin, models.Model):
@@ -14,7 +14,7 @@ class Order(DateFieldsMixin, models.Model):
 
     state = models.CharField(max_length=20, choices=STATE.choices, default=STATE.UNPAID)
     total_cost = models.PositiveBigIntegerField(default=0)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='order')
     address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True, blank=True)
 
     # TODO beacuse customer dont add address in the registration form

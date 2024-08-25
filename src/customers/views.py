@@ -99,3 +99,5 @@ class CustomerUpdateView(LoginRequiredMixin, UpdateView):
         context['addresses'] = Address.objects.filter(customer=self.request.user)
         context['is_editing'] = True
         return context
+
+
