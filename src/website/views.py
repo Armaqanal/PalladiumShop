@@ -236,7 +236,6 @@ class CommentSubmissionView(LoginRequiredMixin, FormView):
         context['form'] = self.get_form()
         return context
 
-
 class CategoryListView(ListView):
     context_object_name = "main-category"
     template_name = 'website/sections/category.html'
