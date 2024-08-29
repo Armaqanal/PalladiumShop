@@ -1,7 +1,7 @@
 from django.urls import path, re_path, include
-from .views import (ProductListView, ProductDetailView, CommentSubmissionView, SubCategoryListView,
+from .views import (ProductListView, ProductDetailView, CommentSubmissionView,
                     CategoryListView, ProductCreateView, ProductUpdateView, ProductSummaryListView,
-                    ProductDeleteView, CustomerCommentsListView, CustomerDeleteView, RateProductView, CheckPurchaseView)
+                    ProductDeleteView, CustomerCommentsListView, CustomerDeleteView, RateProductView, CheckPurchaseView,SubCategoryListView)
 
 app_name = 'website'
 
@@ -20,9 +20,11 @@ urlpatterns = [
     path('comments/list/', CustomerCommentsListView.as_view(), name='comment-list'),
     path('comments/delete/<int:pk>', CustomerDeleteView.as_view(), name='comment-delete'),
 
-    path('categories/', CategoryListView.as_view(), name='category-list'),
-    path('categories/<int:category_id>/subcategories/', SubCategoryListView.as_view(), name='subcategory-list'),
-
     path('check-purchase/', CheckPurchaseView.as_view(), name='check_purchase'),
     path('rate-product/', RateProductView.as_view(), name='rate_product'),
+
+    # Category + SubCategory
+    path('', CategoryListView.as_view(), name='category_list'),
+    path('categories/<int:category_id>/', SubCategoryListView.as_view(), name='subcategory_list'),
+
 ]

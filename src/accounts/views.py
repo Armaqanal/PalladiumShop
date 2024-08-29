@@ -65,7 +65,6 @@ class PalladiumLoginView(LoginView):
                         order_item.quantity += quantity
                         order_item.save()
 
-
                 response.delete_cookie('cart')
 
                 return redirect(reverse('orders:checkout'))

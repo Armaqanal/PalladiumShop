@@ -12,8 +12,9 @@
                 </div>
 
                 <div class="right-top-bar flex-w h-full">
-                    <a href="#" class="flex-c-m trans-04 p-lr-25">
-                        Help & FAQs
+                    <a href="{% url 'website:product-list' %}" class="flex-c-m trans-04 p-lr-25"
+                       style="font-family: Tahoma, sans-serif;">
+                        صفحه اصلی
                     </a>
                     {% if request.user.is_authenticated %}
                         {% if request.user.is_customer %}
@@ -29,10 +30,6 @@
                         {% endif %}
                     {% endif %}
 
-
-                    <a href="#" class="flex-c-m trans-04 p-lr-25">
-                        EN
-                    </a>
 
                     {% if request.user.is_authenticated %}
                         <form action="{% url 'accounts:logout' %}" class="flex-c-m trans-04 p-lr-25"
@@ -88,6 +85,7 @@
 
 {% endblock banner %}
 <!-- end banner section -->
+
 {% block content %}
     <style>
         @import url(https://fonts.googleapis.com/css?family=Roboto:400,300);
@@ -98,11 +96,11 @@
             font-weight: 400;
         }
 
-        h1 {
-            text-align: center;
-            font-size: 2.5rem;
-            font-weight: 300;
-        }
+        {#h3 {#}
+        {#    text-align: center;#}
+        {#    font-size: 2.5rem;#}
+        {#    font-weight: 300;#}
+
 
         .card-container {
             display: flex;
@@ -193,7 +191,7 @@
         }
     </style>
 
-    <h1>Top Companies</h1>
+    <h3 style="font-family: Tahoma, sans-serif;  text-align: center;">پر فروش ترین شرکت ها</h3>
 
     <div class="card-container">
         {% for company in best_companies %}
@@ -211,26 +209,107 @@
 
     <nav class="pagination-container">
         <div class="pagination">
-            {% if page_obj.has_previous %}
-                <a class="pagination-newer" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            {% if best_companies.has_previous %}
+                <a class="pagination-newer" href="?sales_page={{ best_companies.previous_page_number }}">Previous</a>
             {% endif %}
 
             <span class="pagination-numbers">
-                {% for num in page_obj.paginator.page_range %}
-                    {% if num == page_obj.number %}
-                        <a class="pagination-active" href="?page={{ num }}">{{ num }}</a>
+                {% for num in best_companies.paginator.page_range %}
+                    {% if num == best_companies.number %}
+                        <a class="pagination-active" href="?sales_page={{ num }}">{{ num }}</a>
                     {% else %}
-                        <a href="?page={{ num }}">{{ num }}</a>
+                        <a href="?sales_page={{ num }}">{{ num }}</a>
                     {% endif %}
                 {% endfor %}
             </span>
 
-            {% if page_obj.has_next %}
-                <a class="pagination-older" href="?page={{ page_obj.next_page_number }}">Next</a>
+            {% if best_companies.has_next %}
+                <a class="pagination-older" href="?sales_page={{ best_companies.next_page_number }}">Next</a>
             {% endif %}
         </div>
     </nav>
+
+
+    <h3 style="font-family: Tahoma, sans-serif;  text-align: center;">محبوب ترین شرکت ها</h3>
+
+    <div class="card-container">
+        {% for company in best_companies_rate %}
+            <div class="card" data-rank="#{{ company.rank }}">
+                {% if company.logo %}
+                    <img src="{{ company.logo.url }}" alt="{{ company.name }} Logo">
+                {% else %}
+                    <img src="http://placehold.it/150x100" alt="Placeholder Image">
+                {% endif %}
+            </div>
+        {% empty %}
+            <p>No companies found.</p>
+        {% endfor %}
+    </div>
+
+    <nav class="pagination-container">
+        <div class="pagination">
+            {% if best_companies_rate.has_previous %}
+                <a class="pagination-newer"
+                   href="?rate_page={{ best_companies_rate.previous_page_number }}">Previous</a>
+            {% endif %}
+
+            <span class="pagination-numbers">
+                {% for num in best_companies_rate.paginator.page_range %}
+                    {% if num == best_companies_rate.number %}
+                        <a class="pagination-active" href="?rate_page={{ num }}">{{ num }}</a>
+                    {% else %}
+                        <a href="?rate_page={{ num }}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+            </span>
+
+            {% if best_companies_rate.has_next %}
+                <a class="pagination-older" href="?rate_page={{ best_companies_rate.next_page_number }}">Next</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <h3 style="font-family: Tahoma, sans-serif;  text-align: center;">جدیدترین شرکت ها</h3>
+
+    <div class="card-container">
+        {% for company in newest_companies %}
+            <div class="card" data-rank="#{{ company.rank }}">
+                {% if company.logo %}
+                    <img src="{{ company.logo.url }}" alt="{{ company.name }} Logo">
+                {% else %}
+                    <img src="http://placehold.it/150x100" alt="Placeholder Image">
+                {% endif %}
+            </div>
+        {% empty %}
+            <p>No companies found.</p>
+        {% endfor %}
+    </div>
+
+    <nav class="pagination-container">
+        <div class="pagination">
+            {% if newest_companies.has_previous %}
+                <a class="pagination-newer"
+                   href="?newest_page={{ newest_companies.previous_page_number }}">Previous</a>
+            {% endif %}
+
+            <span class="pagination-numbers">
+            {% for num in newest_companies.paginator.page_range %}
+                {% if num == newest_companies.number %}
+                    <a class="pagination-active" href="?newest_page={{ num }}">{{ num }}</a>
+                {% else %}
+                    <a href="?newest_page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+        </span>
+
+            {% if newest_companies.has_next %}
+                <a class="pagination-older" href="?newest_page={{ newest_companies.next_page_number }}">Next</a>
+            {% endif %}
+        </div>
+    </nav>
+
 {% endblock %}
+
 
 
 

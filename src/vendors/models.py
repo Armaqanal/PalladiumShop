@@ -1,8 +1,8 @@
+from django.utils import timezone
 from django.db import models
 from customers.models import DateFieldsMixin, Customer, User
-from django.core.validators import (MinLengthValidator, MaxLengthValidator,
-                                    MinValueValidator, MaxValueValidator)
-from django.db.models import Q, Sum
+
+from django.db.models import Q, Sum, Count, F, DecimalField, ExpressionWrapper
 
 from django.utils.text import slugify
 
@@ -32,13 +32,37 @@ class Company(DateFieldsMixin, models.Model):
             companies = companies[:limit]
         return companies
 
+    @classmethod
+    def get_best_company_rate(cls, limit=None):
+        companies = cls.objects.annotate(
+            total_products_rate=Sum('products__average_rating'),
+            total_products=Count('products')
+        ).annotate(
+            average_company_rate=ExpressionWrapper(
+                F('total_products_rate') / F('total_products'),
+                output_field=DecimalField()
+            )
+        ).order_by('-average_company_rate')
+
+        if limit:
+            companies = companies[:limit]
+
+        return companies
+
+    @classmethod
+    def get_newest_companies(cls, limit=None):
+        companies = cls.objects.filter(created_at__lte=timezone.now()).order_by('-created_at')
+        if limit:
+            companies = companies[:limit]
+        return companies
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name, allow_unicode=True)
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.name, self.pk
+        return self.name
 
 
 class Vendor(User):

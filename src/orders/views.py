@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView, DetailView
 
 from .models import Order, OrderItem
 from django.http import JsonResponse
@@ -193,14 +193,18 @@ def handle_address_selection_or_creation(request, customer, order):
     else:
         return get_object_or_404(Address, pk=address_id)
 
-# class OrderHistoryListView(LoginRequiredMixin, ListView):
-#     template_name = 'users/customers/order_history.html'
-#     context_object_name = 'orders'
-#
-#     def get_queryset(self):
-#         return Order.objects.filter(customer=self.request.user).order_by('-created_at')
-#
-# def get_context_data(self, **kwargs):
-#     context = super().get_context_data(**kwargs)
-#     context['form'] = CompanyRatingForm()
-#     return context
+
+class OrderHistoryListView(LoginRequiredMixin, TemplateView):
+    template_name = 'users/customers/order_history.html'
+
+
+class OrderItemDetailView(LoginRequiredMixin, DetailView):
+    model = Order
+    template_name = 'users/customers/order_item_history.html'
+    context_object_name = 'order'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        order = self.object
+        context['order_items'] = OrderItem.objects.filter(order=order)
+        return context

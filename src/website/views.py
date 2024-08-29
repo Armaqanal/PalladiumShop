@@ -1,7 +1,6 @@
 import json
 
-from django.core.exceptions import PermissionDenied
-from django.db.models.query import QuerySet
+from django.db.models import Sum
 from django.http import JsonResponse
 from django.views import View
 from django.views.generic import (
@@ -45,7 +44,38 @@ class ProductListView(ListView):
             products = products.filter(category__name=category)
         if company:
             products = products.filter(company__name__icontains=company)
+        products = self.filtered_by_product_rate(products)
+        products = self.filtered_by_product_price(products)
+        products = self.filtered_by_product_best_sales(products)
 
+        return products
+
+    def filtered_by_product_rate(self, products):
+        product_rate = self.request.GET.get('rate', '')
+        if product_rate:
+            try:
+                products_rate = float(product_rate)
+                if not 1.0 <= products_rate <= 5.0:
+                    messages.error(self.request, "لطفا بین 1-5 انتخاب کنید")
+                else:
+                    products = products.filter(average_rating__gte=products_rate)
+                    messages.success(self.request, "شما در حال تماشای محبوب ترین ها هستید")
+            except ValueError:
+                messages.error(self.request, "رتبه محصول نامعتبر هست")
+        return products
+
+    def filtered_by_product_price(self, products):
+        product_price = self.request.GET.get('pricey', '')
+        if product_price:
+            products = products.order_by('-price')[:6]
+        return products
+
+    def filtered_by_product_best_sales(self, products):
+        product_sales = self.request.GET.get('best_sales', '')
+        if product_sales:
+            products = products.annotate(total_quantity=Sum('order_items__quantity')).filter(
+                order_items__order__state=Order.STATE.PAID).order_by('-total_quantity')[:5]
+            messages.success(self.request, "شما در حال تماشای پرفروش ترین ها هستید")
         return products
 
     def get_context_data(self, **kwargs):
@@ -236,22 +266,26 @@ class CommentSubmissionView(LoginRequiredMixin, FormView):
         context['form'] = self.get_form()
         return context
 
+
 class CategoryListView(ListView):
-    context_object_name = "main-category"
-    template_name = 'website/sections/category.html'
+    model = Category
+    context_object_name = "main_categories"
+    template_name = 'website/sections/category_section.html'
 
     def get_queryset(self):
-        parents = Category.objects.filter(subcategories__isnull=None)
-        return parents
+        queryset = Category.objects.filter(subcategories__isnull=True).prefetch_related('parent_categories')
+        return queryset
 
 
 class SubCategoryListView(ListView):
-    context_object_name = "sub-category"
-    template_name = 'website/sections/category.html'
+    context_object_name = "sub_categories"
+    template_name = 'website/sections/category_section.html'
 
     def get_queryset(self):
         category_id = self.kwargs.get('category_id')
-        return Category.objects.filter(subcategories__id=category_id)
+        main_category = get_object_or_404(Category, id=category_id)
+        queryset = Category.objects.filter(subcategories=main_category)
+        return queryset
 
 
 class CheckPurchaseView(View):
@@ -290,7 +324,6 @@ class RateProductView(View):
         print(f"RateProductView: Received product_id: {product_id}")
         print(f"RateProductView: Received rating_value: {rating_value}")
 
-        # Validate rating_value
         try:
             rating_value = int(rating_value)
             if not (1 <= rating_value <= 5):

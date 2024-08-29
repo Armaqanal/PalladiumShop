@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from orders.models import Order, OrderItem
 from website.models import Product
-from customers.models import Customer,Address
+from customers.models import Customer, Address
+
 
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,7 +30,6 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ['id', 'product', 'quantity', 'price', 'discounted_price', 'subtotal']
 
 
-
 class OrderSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer(read_only=True)
     order_items = OrderItemSerializer(many=True, read_only=True)
@@ -37,4 +37,21 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'state', 'total_cost', 'order_items', 'order_quantity', 'customer','address']
+        fields = ['id', 'state', 'total_cost', 'order_items', 'order_quantity', 'customer', 'address']
+
+
+class OrderSerializerCustomer(serializers.ModelSerializer):
+    customer = CustomerSerializer(read_only=True)
+    order_items = serializers.HyperlinkedRelatedField(read_only=True, many=True, view_name='order-item-detail-customer')
+
+    class Meta:
+        model = Order
+        fields = ['id', 'total_cost', 'customer', 'state', 'order_items']
+
+
+class OrderItemSerializerCustomer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
+
+    class Meta:
+        model = OrderItem
+        fields = ['id', 'price', 'name']

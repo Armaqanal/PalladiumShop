@@ -30,6 +30,9 @@ class Category(models.Model):
             self.slug = slugify(self.name, allow_unicode=True)
         super().save(*args, **kwargs)
 
+    def is_subcategory(self):
+        return self.subcategories is not None
+
     class Meta:
         verbose_name = "دسته بندی"
         verbose_name_plural = "دسته بندی‌ها"
