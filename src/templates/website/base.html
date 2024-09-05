@@ -63,25 +63,6 @@
 {% endblock banner %}
 <!-- end banner section -->
 
-{#<div class="slider-container">#}
-{#    {% block coursel %}#}
-{#        <!-- companies coursel-->#}
-{#        {% include 'products/companies_coursel.html' %}#}
-{#        <!-- companies coursel -->#}
-{#    {% endblock coursel %}#}
-{#</div>#}
-
-
-{#<!-- product section -->#}
-{#{% block product %}#}
-{#    {% include 'website/sections/product_section.html' %}#}
-{#{% endblock product %}#}
-{#<!-- product section -->#}
-
-
-
-
-
 {% block content %}
     {% include 'website/pages/home.html' %}
 {% endblock content %}
@@ -135,9 +116,9 @@
 <!--===============================================================================================-->
 <script src="{% static 'website/vendor/MagnificPopup/jquery.magnific-popup.min.js' %}"></script>
 <script>
-    $('.gallery-lb').each(function () { // the containers for all your galleries
+    $('.gallery-lb').each(function () {
         $(this).magnificPopup({
-            delegate: 'a', // the selector for gallery item
+            delegate: 'a',
             type: 'image',
             gallery: {
                 enabled: true
@@ -149,52 +130,12 @@
 <!--===============================================================================================-->
 <script src="{% static 'website/vendor/isotope/isotope.pkgd.min.js' %}"></script>
 <!--===============================================================================================-->
-{#<script src="{% static 'website/vendor/sweetalert/sweetalert.min.js' %}"></script>#}
-{#<script>#}
-{#    $('.js-addwish-b2').on('click', function (e) {#}
-{#        e.preventDefault();#}
-{#    });#}
-{##}
-{#    $('.js-addwish-b2').each(function () {#}
-{#        var nameProduct = $(this).parent().parent().find('.js-name-b2').html();#}
-{#        $(this).on('click', function () {#}
-{#            swal(nameProduct, "is added to wishlist !", "success");#}
-{##}
-{#            $(this).addClass('js-addedwish-b2');#}
-{#            $(this).off('click');#}
-{#        });#}
-{#    });#}
-{##}
-{#    $('.js-addwish-detail').each(function () {#}
-{#        var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();#}
-{##}
-{#        $(this).on('click', function () {#}
-{#            swal(nameProduct, "is added to wishlist !", "success");#}
-{##}
-{#            $(this).addClass('js-addedwish-detail');#}
-{#            $(this).off('click');#}
-{#        });#}
-{#    });#}
-{##}
-{##}
-{##}
-{#    /*---------------------------------------------*/#}
-{##}
-{#    $('.js-addcart-detail').each(function () {#}
-{#        var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();#}
-{#        $(this).on('click', function () {#}
-{#            swal(nameProduct, "is added to cart !", "success");#}
-{#        });#}
-{#    });#}
-{##}
-{#</script>#}
-<script src="{% static 'website/vendor/sweetalert/sweetalert.min.js' %}"></script>
+
 <script src="{% static 'website/vendor/sweetalert/sweetalert.min.js' %}"></script>
 <script>
     $(document).ready(function () {
-        let ratingValue = 1; // Default rating is 1
+        let ratingValue = 1;
 
-        // Function to get the CSRF token from the cookie
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -212,29 +153,25 @@
 
         const csrftoken = getCookie('csrftoken');
 
-        // Show modal when heart is clicked
         $('.js-addwish-b2').on('click', function (e) {
             e.preventDefault();
-            e.stopPropagation(); // Prevent event propagation
+            e.stopPropagation();
             const productId = $(this).data('product-id');
             $('#rateModal').data('product-id', productId).fadeIn();
         });
 
-        // Handle star selection
         $('.star').on('click', function () {
-            ratingValue = $(this).data('value');  // Get the selected rating value
+            ratingValue = $(this).data('value');
             $(this).siblings().removeClass('selected');
             $(this).addClass('selected');
         });
 
-        // Submit rating
         $('#submitRating').on('click', function (e) {
-            e.preventDefault(); // Prevent the default button action
-            e.stopPropagation(); // Prevent event propagation
+            e.preventDefault();
+            e.stopPropagation();
 
             const productId = $('#rateModal').data('product-id');
 
-            // Validate ratingValue
             if (ratingValue < 1 || ratingValue > 5) {
                 swal('Error', 'Please select a valid rating', 'error');
                 return;
@@ -276,30 +213,27 @@
 
 
 <style>
-    /* Modal Background */
     .modal {
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
+        display: none;
+        position: fixed;
+        z-index: 1;
         left: 0;
         top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
     }
 
-    /* Modal Content */
     .modal-content {
         background-color: #fefefe;
-        margin: 15% auto; /* 15% from top and centered */
+        margin: 15% auto;
         padding: 20px;
         border: 1px solid #888;
-        width: 80%; /* Could be more or less, depending on screen size */
-        max-width: 500px; /* Maximum width of the modal */
+        width: 80%;
+        max-width: 500px;
     }
 
-    /* Close Button */
     .close {
         color: #aaa;
         float: right;
@@ -314,7 +248,6 @@
         text-decoration: none;
     }
 
-    /* Rating Stars */
     .rating {
         display: flex;
         justify-content: center;
@@ -328,10 +261,9 @@
     }
 
     .selected {
-        color: gold;
+        color: gold !important;
     }
 
-    /* Button Style */
     .modal-btn {
         background-color: #4CAF50;
         border: none;
@@ -346,7 +278,7 @@
     }
 
     .modal-btn:hover {
-        background-color: #45a049; /* Darker green */
+        background-color: #45a049;
     }
 </style>
 

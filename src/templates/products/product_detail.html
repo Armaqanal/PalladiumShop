@@ -12,8 +12,9 @@
                 </div>
 
                 <div class="right-top-bar flex-w h-full">
-                    <a href="#" class="flex-c-m trans-04 p-lr-25">
-                        Help & FAQs
+                    <a href="{% url 'website:product-list' %}" class="flex-c-m trans-04 p-lr-25"
+                       style="font-family: Tahoma, sans-serif;">
+                        صفحه اصلی
                     </a>
                     {% if request.user.is_authenticated %}
                         {% if request.user.is_customer %}
@@ -28,9 +29,6 @@
                             </a>
                         {% endif %}
                     {% endif %}
-                    <a href="#" class="flex-c-m trans-04 p-lr-25">
-                        EN
-                    </a>
 
                     {% if request.user.is_authenticated %}
                         <form action="{% url 'accounts:logout' %}" class="flex-c-m trans-04 p-lr-25"
@@ -207,16 +205,16 @@
         }
 
         .product-entry .product-deatil h5 a span {
-            color: #9aa7af;
+            color: #717fe0;
             display: block;
             font-size: 13px
         }
 
         .load-more-btn {
-            background-color: #21c2f8;
-            border-bottom: 2px solid #037ca5;
+            background-color: #717fe0;
+            border-bottom: 2px solid #717fe0;
             border-radius: 2px;
-            border-top: 2px solid #0cf;
+            border-top: 2px solid #717fe0;
             margin-top: 20px;
             padding: 9px 0;
             width: 100%
@@ -227,7 +225,7 @@
         .product-entry .product-deatil p.price-container span,
         .shipping table tbody tr td p.price-container span,
         .shopping-items table tbody tr td p.price-container span {
-            color: #21c2f8;
+            color: #717fe0;
             font-family: Lato, sans-serif;
             font-size: 24px;
             line-height: 20px
@@ -299,7 +297,7 @@
         }
 
         .product-deatil .glyphicon {
-            color: #3276b1
+            color: #717fe0
         }
 
         .product-deatil .product-image {
@@ -380,7 +378,7 @@
 
         .product-deatil .certified ul li a span {
             display: block;
-            color: #21c2f8;
+            color: #717fe0;
             font-size: 13px;
             font-weight: 700;
             text-align: center
@@ -420,6 +418,72 @@
             width: 40px;
             height: 40px;
         }
+
+        .custom-button {
+            background-color: #717fe0; /* Background color */
+            color: #fff; /* Text color */
+            border: none; /* No border */
+            padding: 10px 20px; /* Padding for the button */
+            border-radius: 20px; /* Rounded corners */
+            font-size: 16px; /* Font size */
+            cursor: pointer; /* Change cursor to pointer on hover */
+            transition: background-color 0.3s ease; /* Smooth transition effect */
+        }
+
+        .custom-button:hover {
+            background-color: #5d6cc2; /* Slightly darker color on hover */
+        }
+
+        #oh, #ah {
+            background-color: #717fe0 !important; /* Set background color to #717fe0 */
+            color: #fff !important; /* Set text color to white */
+            padding: 10px 10px; /* Add padding for better appearance */
+            text-decoration: none; /* Remove underline */
+            border: none; /* Remove any borders */
+            border-radius: 20px;
+            font-size: 14px; /* Add slight rounding to corners */
+        }
+
+        #ah {
+            margin-right: 8px;
+        }
+
+        .message {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px; /* Adjust spacing between messages */
+        }
+
+        .message-content {
+            display: flex;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .online {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .message-text-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .username {
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+
+        .message-text {
+            text-align: right;
+        }
+
+
     </style>
     {#</head>#}
     <body>
@@ -462,33 +526,33 @@
                     <div class="col-md-6 col-md-offset-1 col-sm-12 col-xs-12">
                         <h2 class="name" style="font-family: Tahoma, sans-serif; text-align: right;">
 
-                            <div>{{ product.name }} : اسم محصول</div>
+                            <div>{{ product.name }}</div>
                             <br/>
                             <small>
                                 <a href="javascript:void(0);" style="color: inherit; text-decoration: none;">
-                                    {{ product.company.name }} نام شرکت
+                                    نام شرکت :{{ product.company.name }}
                                 </a>
                             </small>
 
                             <br/>
                             <small>
                                 <a href="javascript:void(0);" style="color: inherit; text-decoration: none;">
-                                    {{ product.category }} نام دسته بندی
+                                    نام دسته بندی :{{ product.category }}
                                 </a>
                             </small>
 
 
-                            <div>
-                                <i class="fa fa-star fa-2x text-primary"></i>
-                                <i class="fa fa-star fa-2x text-primary"></i>
-                                <i class="fa fa-star fa-2x text-primary"></i>
-                                <i class="fa fa-star fa-2x text-primary"></i>
-                                <i class="fa fa-star fa-2x text-muted"></i>
-                                <span class="fa fa-2x">
-                <h5>(109) Votes</h5>
-            </span>
-                                <a href="javascript:void(0);">109 customer reviews</a>
-                            </div>
+                            {#                            <div>#}
+                            {#                                <i class="fa fa-star fa-2x text-primary"></i>#}
+                            {#                                <i class="fa fa-star fa-2x text-primary"></i>#}
+                            {#                                <i class="fa fa-star fa-2x text-primary"></i>#}
+                            {#                                <i class="fa fa-star fa-2x text-primary"></i>#}
+                            {#                                <i class="fa fa-star fa-2x text-muted"></i>#}
+                            {#                                <span class="fa fa-2x">#}
+                            {#                <h5>(109) Votes</h5>#}
+                            {#            </span>#}
+                            {#                                <a href="javascript:void(0);">109 customer reviews</a>#}
+                            {#                            </div>#}
                         </h2>
                         <hr/>
                         <div class="price-container" style="font-family: Tahoma, sans-serif; text-align: right;">
@@ -502,13 +566,14 @@
                             <ul id="myTab" class="nav nav-pills"
                                 style="font-family: Tahoma, sans-serif; text-align: right; direction: rtl; padding-right: 0;">
                                 <li class="active" style="float: right;">
-                                    <a href="#more-information" data-toggle="tab" class="no-margin"
+                                    <a id=oh href="#more-information" data-toggle="tab" class="no-margin"
                                        style="display: block; text-align: right;">
                                         توضیحات
                                     </a>
                                 </li>
                                 <li style="float: right;">
-                                    <a href="#reviews" data-toggle="tab" style="display: block; text-align: right;">
+                                    <a id=ah href="#reviews" data-toggle="tab"
+                                       style="display: block; text-align: right;">
                                         نظرات
                                     </a>
                                 </li>
@@ -517,7 +582,6 @@
                             <div id="myTabContent" class="tab-content">
                                 <div class="tab-pane fade active in" id="more-information">
                                     <br/>
-                                    <strong>Description Title</strong>
                                     <p>
                                         {{ product.description }}
                                     </p>
@@ -529,12 +593,19 @@
                                           action="{% url 'website:submit_comment'  slug=product.slug %}">
                                         {% csrf_token %}
                                         <div class="form-group">
-                                            <textarea name="text" class="form-control" rows="3"
-                                                      placeholder="Write a review"></textarea>
+                                            <textarea
+                                                    name="text"
+                                                    class="form-control"
+                                                    rows="3"
+                                                    placeholder="نظرتان را وارد کنید"
+                                                    style="text-align: right;">
+                                            </textarea>
+
                                         </div>
                                         <div class="margin-top-10">
-                                            <button type="submit" class="btn btn-sm btn-primary pull-right">Submit
-                                                Review
+                                            <button type="submit" class="custom-button"
+                                                    style="font-family: Tahoma,sans-serif">
+                                                ثبت
                                             </button>
                                         </div>
                                     </form>
@@ -544,31 +615,35 @@
                                         <ul>
                                             {% for comment in comments %}
                                                 <li class="message">
-                                                    <img src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                                         class="online"/>
-                                                    <span class="message-text">
-                        <a href="javascript:void(0);" class="username">
-                            {{ comment.user.username }}
-                        </a>
-                        {{ comment.text }}
-                    </span>
+                                                    <div class="message-content">
+                                                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png"
+                                                             class="online"/>
+                                                        <div class="message-text-container">
+                                                            <a href="javascript:void(0);" class="username">
+                                                                {{ comment.user.username }}
+                                                            </a>
+                                                            <span class="message-text">
+                            {{ comment.text }}
+                        </span>
+                                                        </div>
+                                                    </div>
                                                 </li>
                                             {% empty %}
-                                                <li>No reviews yet.</li>
+                                                <li class="no-comment"
+                                                    style="text-align: left; font-family: Tahoma,sans-serif">نظری وارد
+                                                    نشده
+                                                </li>
                                             {% endfor %}
                                         </ul>
                                     </div>
+
                                 </div>
 
 
                             </div>
                         </div>
                         <hr/>
-                        <div class="row">
-                            <div class="col-sm-12 col-md-6 col-lg-6">
-                                <a href="javascript:void(0);" class="btn btn-success btn-lg">Add to cart ($129.54)</a>
-                            </div>
-                        </div>
+
                     </div>
 
                 </div>

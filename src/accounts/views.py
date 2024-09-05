@@ -1,6 +1,8 @@
+import random
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView
 
@@ -12,19 +14,39 @@ from django.shortcuts import get_object_or_404
 
 from vendors.models import Vendor
 from vendors.forms import OwnerRegistrationForm
-from django.contrib.auth import login as auth_login
 from django.contrib.auth.views import LoginView
 from django.http import JsonResponse
-from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import login as auth_login
 import json
 from django.shortcuts import redirect
 from django.urls import reverse
+import re
+from django.core.cache import cache
+from kavenegar import *
 
 User = get_user_model()
 
 
 class HomeView(TemplateView):
     template_name = 'website/pages/home.html'
+
+
+class PalladiumLogoutView(LoginRequiredMixin, LogoutView):
+    next_page = reverse_lazy('website:product-list')
+
+
+class PalladiumRegisterView(CreateView):
+    model = Customer
+    template_name = 'accounts/register.html'
+    form_class = CustomerRegisterForm
+    success_url = reverse_lazy('accounts:login')
+
+
+class PalladiumOwnerRegisterView(CreateView):
+    model = Vendor
+    form_class = OwnerRegistrationForm
+    success_url = reverse_lazy('accounts:login')
+    template_name = 'accounts/register-vendor.html'
 
 
 class PalladiumLoginView(LoginView):
@@ -38,12 +60,16 @@ class PalladiumLoginView(LoginView):
         return context
 
     def form_valid(self, form):
+        ''' bara inke form valid beshe va cooki ha ba vorod ba email az dast naran'''
         response = super().form_valid(form)
-        cart = json.loads(self.request.COOKIES.get('cart', '{}'))
+        self.handle_cart_and_order(self.request.user, response)
+        return response
 
+    def handle_cart_and_order(self, user, response):
+        cart = json.loads(self.request.COOKIES.get('cart', '{}'))
         if cart:
             try:
-                customer = Customer.objects.get(pk=self.request.user.pk)
+                customer = Customer.objects.get(pk=user.pk)
                 order, created = Order.objects.get_or_create(
                     customer=customer,
                     address=customer.addresses.first(),
@@ -65,37 +91,83 @@ class PalladiumLoginView(LoginView):
                         order_item.quantity += quantity
                         order_item.save()
 
-                response.delete_cookie('cart')
-
+                response.delete_cookie('cart')  # TODO 2 Delete cookie
                 return redirect(reverse('orders:checkout'))
-            except ObjectDoesNotExist:
+            except Customer.DoesNotExist:
                 return JsonResponse({'message': 'Error creating order. Please try again later.'}, status=500)
 
-        auth_login(self.request, self.request.user)
-        return response
+        self.login_user(self.request, user)
+
+    def login_user(self, request, user):
+        backend = 'customers.auth_backends.PalladiumBackend'
+        user.backend = backend
+        auth_login(request, user, backend=backend)
 
     def post(self, request, *args, **kwargs):
+        if 'send_opt' in request.POST:
+            return self.send_opt(request)
+        elif 'verify_opt' in request.POST:
+            return self.verify_opt(request)
+
         response = super().post(request, *args, **kwargs)
-        # Explicitly delete the cookie in the response
         response.delete_cookie('cart')
         return response
 
+    def send_opt(self, request):
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            identifier = form.cleaned_data.get('identifier')
+            if identifier:
+                if re.fullmatch(r'\d{10,15}', identifier):
+                    opt = random.randint(100000, 999999)
+                    cache_key = f"opt:{identifier}"
+                    cache.set(cache_key, opt, timeout=60)
+                    try:
+                        api = KavenegarAPI(
+                            '38746F30617070554C7974642B372F2B2F3064655A416959534B6357465871656F784746557155457A526F3D')
+                        params = {
+                            'receptor': identifier,
+                            'message': f'{opt} تست واحد فنی'
+                        }
+                        response = api.sms_send(params)
+                        print(f"Sending OTP {opt} to phone number {identifier}. Response: {response}")
+                    except Exception as e:
+                        print(f"Error sending OTP: {str(e)}")
+                        return JsonResponse({'status': 'fail', 'message': 'Error sending OTP'}, status=500)
 
-class PalladiumLogoutView(LoginRequiredMixin, LogoutView):
-    next_page = reverse_lazy('website:product-list')
-    # next_page = redirect('/')
+                    return JsonResponse({'status': 'opt_required', 'identifier': identifier})
+                elif re.match(r'[^@]+@[^@]+\.[^@]+', identifier):
+                    return JsonResponse({'status': 'email_login', 'identifier': identifier})
+                return JsonResponse({'status': 'fail', 'message': 'Identifier not valid'})
+        return JsonResponse({'status': 'fail', 'message': 'Form not valid'}, status=400)
 
+    def verify_opt(self, request):
+        identifier = request.POST.get('identifier')
+        print(f"Received Identifier: {identifier}")
 
-class PalladiumRegisterView(CreateView):
-    model = Customer
-    template_name = 'accounts/register.html'
-    form_class = CustomerRegisterForm
-    success_url = reverse_lazy('accounts:login')
+        opt = request.POST.get('opt')
+        print(f"Received OTP: {opt}")
 
+        if identifier and opt:
+            cache_key = f"opt:{identifier}"
+            print(f"its my cache_key opt is: {cache_key}")
+            cache_opt = cache.get(cache_key)
+            print(f"its my cache opt is: {cache_opt}")
+            if cache_opt and str(cache_opt) == str(opt):
+                cache.delete(cache_key)
+                try:
+                    if re.match(r'\d{10,15}', identifier):
+                        user = User.objects.get(phone=identifier)
+                    else:
+                        user = User.objects.get(email=identifier)
 
-class PalladiumOwnerRegisterView(CreateView):
-    # chera ba formView nemishe
-    model = Vendor
-    form_class = OwnerRegistrationForm
-    success_url = reverse_lazy('accounts:login')
-    template_name = 'accounts/register-vendor.html'
+                    response = JsonResponse({'status': 'success', 'redirect_url': reverse('website:product-list')})
+                    self.login_user(request, user)
+                    self.handle_cart_and_order(user, response)
+                    return response
+
+                except User.DoesNotExist:
+                    return JsonResponse({'error': 'User does not exist'}, status=400)
+
+            return JsonResponse({'error': 'Invalid OTP'}, status=400)
+        return JsonResponse({'error': 'Required fields missing'}, status=400)

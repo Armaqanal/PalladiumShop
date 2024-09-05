@@ -1,5 +1,8 @@
 {% extends 'website/base.html' %}
+{% load custom_filters %}
 {% load static %}
+{#{% load custom_filters %}#}
+
 
 {% block content %}
 
@@ -21,7 +24,29 @@
     <!-- Product -->
     <div class="bg0 m-t-23 p-b-140">
         <div class="container">
-            {#        filter and search#}
+            <style>
+                .rating {
+                    display: flex;
+                    align-items: center;
+                }
+
+                .rating .star {
+                    font-size: 15px;
+                    margin: 0 2px;
+                    color: #ccc;
+                }
+
+                .rating .star.filled {
+                    color: #717fe0;
+                }
+
+                .rating .average-rating {
+                    margin-left: 10px;
+                    font-size: 14px;
+                    color: #000000;
+                }
+            </style>
+
             <hr>
             <div class="flex-w flex-sb-m p-b-52">
                 {% if request.GET.company and filtered_company %}
@@ -336,17 +361,12 @@
 
 
                                 <!-- Product Details -->
+                                <!-- display rate -->
+                                {% include 'website/pages/rating.html' %}
+                                <!-- display rate -->
+
                                 <div class="block2-txt flex-w flex-t p-t-14">
                                     <div class="block2-txt-child1 flex-col-l">
-                                        <span class="stext-105 cl3">${{ product.price|floatformat:1 }}</span>
-
-
-                                        <div class="rating">
-                                            <!-- companies coursel-->
-                                            {% include 'website/pages/rating.html' %}
-                                            <!-- companies coursel -->
-                                        </div>
-
                                         <div class="block2-txt-child2 flex-r p-t-3">
                                             {% if request.user.is_authenticated %}
                                                 <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2"
@@ -361,9 +381,16 @@
                                             {% endif %}
 
                                         </div>
+                                        <span class="stext-105 cl3">${{ product.price|floatformat:1 }}</span>
+                                        <div class="rating">
+                                            <!-- Display stars -->
+                                            {% for star in 1|to:5 %}
+                                                <span class="star {% if star <= product.average_rating %}filled{% endif %}"
+                                                      data-value="{{ star }}">&#9733;</span>
+                                            {% endfor %}
+                                            <span class="average-rating">{{ product.average_rating }}</span>
+                                        </div>
                                     </div>
-
-
                                     <div class="block2-txt-child2 flex-r p-t-3">
                                         <div class="layer-slick1" data-appear="zoomIn" data-delay="1600">
                                             <button data-product="{{ product.id }}" data-action="add"
@@ -372,8 +399,6 @@
                                                 Shop Now
                                             </button>
                                         </div>
-
-
                                     </div>
                                 </div>
                             </div>
@@ -381,9 +406,13 @@
                     </div>
                 {% endfor %}
             </div>
+            <div class="paginator">
+                <!-- paginator-->
+                {% include 'website/pages/pagination.html' %}
+                <!-- paginator -->
+            </div>
+
         </div>
     </div>
-
-
 
 {% endblock %}

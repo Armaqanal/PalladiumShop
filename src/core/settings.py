@@ -153,3 +153,33 @@ LOGIN_REDIRECT_URL = '/'
 
 JAZZMIN_SETTINGS = {
     "site_title": "Palladium"}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'orders_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'orders.log',
+        },
+    },
+    'loggers': {
+        'orders': {
+            'handlers': ['orders_file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
+
+# Redis - Caches
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}

@@ -1,5 +1,6 @@
 import json
 
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.views import View
@@ -30,7 +31,7 @@ class ProductListView(ListView):
     model = Product
     template_name = 'website/pages/home.html'
     context_object_name = 'products'
-    paginate_by = 1000
+    paginate_by = 12
 
     def get_queryset(self):
         products = Product.objects.all()
@@ -138,8 +139,11 @@ class ProductCreateView(CreateView):
             form.instance.company = company
             self.object = form.save()
 
-            discount.instance = self.object
-            discount.save()
+            if discount.cleaned_data:
+                discount = discount.save(commit=False)
+                discount.save()
+                self.object.discount = discount
+                self.object.save()
 
             images = self.request.FILES.getlist('image')
             for image in images:
@@ -178,7 +182,13 @@ class ProductUpdateView(UpdateView):
         images_form = context['images_form']
         if form.is_valid() and discount.is_valid() and images_form.is_valid():
             self.object = form.save()
-            discount.save()
+
+            discount = discount.save(commit=False)
+            if not discount.pk:
+                discount.save()
+            self.object.discount = discount
+            self.object.save()
+
             images_to_delete = self.request.POST.getlist('delete_images')
             if images_to_delete:
                 ProductImage.objects.filter(id__in=images_to_delete).delete()

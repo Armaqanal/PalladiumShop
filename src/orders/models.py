@@ -46,6 +46,7 @@ class OrderItem(DateFieldsMixin, models.Model):
     discounted_price = models.PositiveIntegerField(default=0, blank=True)
     subtotal = models.PositiveBigIntegerField(default=0, blank=True)
 
+
     @property
     def calculated_subtotal(self):
         return self.quantity * self.discounted_price
@@ -74,7 +75,7 @@ class OrderItem(DateFieldsMixin, models.Model):
             self.product.change_inventory(-quantity_change)
 
         self.quantity = new_quantity
-        self.subtotal = self.calculate_subtotal
+        self.subtotal = self.calculated_subtotal
         self.save()
 
         if quantity_change > 0:

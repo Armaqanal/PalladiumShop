@@ -9,6 +9,5 @@ urlpatterns = [
     path('logout/', views.PalladiumLogoutView.as_view(), name='logout'),
     path('register/', views.PalladiumRegisterView.as_view(), name='register'),
 
-
-    path('register/vendor/', views.PalladiumOwnerRegisterView.as_view(), name='register-vendor')
+    path('register/vendor/', views.PalladiumOwnerRegisterView.as_view(), name='register-vendor'),
 ]

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toggle Radio Buttons</title>
+    <style>
+        .toggle-container {
+            --primary: #000000;
+            display: grid;
+            place-content: center;
+            height: 10vh;
+            margin: 0;
+
+        }
+
+        .toggle-container .toggle {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .toggle-container .toggle input {
+            display: none;
+        }
+
+        .toggle-container .toggle input#toggle-1:checked ~ .label-1,
+        .toggle-container .toggle input#toggle-2:checked ~ .label-2,
+        .toggle-container .toggle input#toggle-3:checked ~ .label-3,
+        .toggle-container .toggle input#toggle-4:checked ~ .label-4,
+        .toggle-container .toggle input#toggle-5:checked ~ .label-5 {
+            width: 6rem;
+        }
+
+
+        .toggle-container .toggle label {
+            width: 4rem;
+            height: 3rem;
+            border-radius: 999px;
+            background: var(--primary);
+            cursor: pointer;
+            transition: 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .toggle-container .toggle label a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .toggle-container .toggle label a:hover {
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div class="toggle-container">
+    <div class="toggle">
+        {% if page_obj.has_previous %}
+            <input type="radio" name="toggle" id="toggle-previous">
+            <label for="toggle-previous" class="label-previous">
+                <a href="?page={{ page_obj.previous_page_number }}">Prev</a>
+            </label>
+        {% endif %}
+
+        {% for page_num in paginator.page_range %}
+            {% if page_obj.number == page_num %}
+                <!-- Highlight current page -->
+                <input type="radio" name="toggle" id="toggle-{{ page_num }}" checked>
+                <label for="toggle-{{ page_num }}" class="label-{{ page_num }}">{{ page_num }}</label>
+            {% else %}
+                <input type="radio" name="toggle" id="toggle-{{ page_num }}">
+                <label for="toggle-{{ page_num }}" class="label-{{ page_num }}">
+                    <a href="?page={{ page_num }}">{{ page_num }}</a>
+                </label>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <input type="radio" name="toggle" id="toggle-next">
+            <label for="toggle-next" class="label-next">
+                <a href="?page={{ page_obj.next_page_number }}">Next</a>
+            </label>
+        {% endif %}
+    </div>
+</div>
+
+
+</body>
+</html>

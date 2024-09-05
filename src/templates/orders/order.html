@@ -12,8 +12,8 @@
                 </div>
 
                 <div class="right-top-bar flex-w h-full">
-                    <a href="#" class="flex-c-m trans-04 p-lr-25">
-                        Help & FAQs
+                    <a href="{% url 'website:product-list' %}" class="flex-c-m trans-04 p-lr-25" style="font-family: Tahoma, sans-serif;">
+                        صفحه اصلی
                     </a>
                     {% if request.user.is_authenticated %}
                         {% if request.user.is_customer %}
@@ -24,9 +24,7 @@
                         {% endif %}
                     {% endif %}
 
-                    <a href="#" class="flex-c-m trans-04 p-lr-25">
-                        EN
-                    </a>
+
 
                     {% if request.user.is_authenticated %}
                         <form action="{% url 'accounts:logout' %}" class="flex-c-m trans-04 p-lr-25"

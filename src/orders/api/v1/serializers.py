@@ -27,17 +27,23 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = ['id', 'product', 'quantity', 'price', 'discounted_price', 'subtotal']
+        fields = ['id', 'product', 'quantity', 'price']
 
 
 class OrderSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer(read_only=True)
-    order_items = OrderItemSerializer(many=True, read_only=True)
+    order_items = serializers.HyperlinkedRelatedField(read_only=True, many=True, view_name='order-item-detail-vendor')
     address = AddressSerializer(read_only=True)
 
     class Meta:
         model = Order
         fields = ['id', 'state', 'total_cost', 'order_items', 'order_quantity', 'customer', 'address']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if self.context['request'].method == 'PATCH':
+            return {'state': representation['state']}
+        return representation
 
 
 class OrderSerializerCustomer(serializers.ModelSerializer):

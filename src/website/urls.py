@@ -24,7 +24,7 @@ urlpatterns = [
     path('rate-product/', RateProductView.as_view(), name='rate_product'),
 
     # Category + SubCategory
-    path('', CategoryListView.as_view(), name='category_list'),
+    path('categories/', CategoryListView.as_view(), name='category_list'),
     path('categories/<int:category_id>/', SubCategoryListView.as_view(), name='subcategory_list'),
 
 ]

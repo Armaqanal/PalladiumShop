@@ -38,7 +38,6 @@ class OwnerRegistrationForm(UserCreationForm):
         vendor = super().save(commit=False)
         vendor.role = Vendor.Roles.OWNER
         if commit:
-            vendor.save()
             company_name = self.cleaned_data.get('company_name')
             company_address = self.cleaned_data.get('company_address')
             company = Company.objects.create(
@@ -63,6 +62,11 @@ class CompanyCreationForm(forms.ModelForm):
 
 
 class VendorsChangeForm(forms.ModelForm):
+    company_name = forms.CharField(max_length=100, required=False,
+                                   widget=forms.TextInput(attrs={'class': 'form-control' 'form-control-lg'}))
+    company_address = forms.CharField(max_length=200, required=False,
+                                      widget=forms.TextInput(attrs={'class': 'form-control form-control-lg'}))
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['email'].widget.attrs.update({
@@ -86,15 +90,27 @@ class VendorsChangeForm(forms.ModelForm):
         self.fields['date_of_birth'].widget.attrs.update({
             'class': 'form-control',
         })
-        self.fields['company'].widget.attrs.update({
+        self.fields['company_name'].widget.attrs.update({
+            'class': 'form-control'
+        })
+        self.fields['company_address'].widget.attrs.update({
             'class': 'form-control'
         })
 
     class Meta:
         model = Vendor
-        fields = ['email', 'phone', 'first_name', 'last_name', 'gender', 'photo', 'date_of_birth', 'company']
+        fields = ['email', 'phone', 'first_name', 'last_name', 'gender', 'photo', 'date_of_birth', 'company_name',
+                  'company_address']
         widgets = {
             'date_of_birth': DateInput
         }
 
-
+    def save(self, commit=True):
+        vendor = super().save(commit=False)
+        if commit:
+            company = vendor.company
+            company.name = self.cleaned_data.get('company_name')
+            company.address = self.cleaned_data.get('company_address')
+            company.save()
+            vendor.save()
+        return vendor

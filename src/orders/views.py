@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView
 
 from .models import Order, OrderItem
 from django.http import JsonResponse
@@ -207,4 +207,12 @@ class OrderItemDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data()
         order = self.object
         context['order_items'] = OrderItem.objects.filter(order=order)
-        return context
+        return context  # TODO Make it like OrderItemListViewVendor
+
+
+class OrderHistoryListViewVendor(LoginRequiredMixin, TemplateView):
+    template_name = 'users/vendors/order_history_vendor.html'
+
+
+class OrderItemListViewVendor(LoginRequiredMixin, TemplateView):
+    template_name = 'users/vendors/order_item_history_vendor.html'

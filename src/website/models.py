@@ -42,9 +42,9 @@ class Category(models.Model):
 
 
 class Discount(models.Model):
-    percent = models.IntegerField(default=0, null=True, blank=True,
-                                  verbose_name="درصد", help_text="چند درصد تخفیف؟")
-    amount = models.PositiveBigIntegerField(default=0, verbose_name="چقدر تخفیف؟")
+    percent = models.PositiveBigIntegerField(null=True, blank=True,
+                                             verbose_name="درصد", help_text="چند درصد تخفیف؟")
+    amount = models.PositiveBigIntegerField(verbose_name="چقدر تخفیف؟")
     start_date = models.DateTimeField(default=timezone.now, null=True, blank=True,
                                       verbose_name="زمان شروع")
     end_date = models.DateTimeField(default=None, null=True, blank=True,
@@ -74,6 +74,11 @@ class Discount(models.Model):
             final_price = price - self.amount
 
         return max(final_price, 0)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.full_clean()
+            super().save(*args, **kwargs)
 
 
 class Product(DateFieldsMixin, models.Model):

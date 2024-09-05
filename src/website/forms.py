@@ -32,12 +32,6 @@ class DiscountForm(forms.ModelForm):
         fields = '__all__'
 
 
-# class ProductSummeryForm(forms.model):
-#     class Meta:
-#         model = Product
-#         include=['name','category','price','discount']
-
-
 class ProductRatingForm(forms.ModelForm):
     class Meta:
         model = ProductRating

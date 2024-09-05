@@ -15,7 +15,4 @@ urlpatterns = [
     path('address/<int:pk>/update', views.CustomerUpdateView.as_view(), name='update-address'),
 ]
 
-
-
-
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

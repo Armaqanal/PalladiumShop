@@ -27,7 +27,10 @@ class VendorEditProfileView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         vendor = get_object_or_404(Vendor, id=request.user.id)
-        form = VendorsChangeForm(instance=vendor)
+        company_name = vendor.company.name if vendor.company else ''
+        company_address = vendor.company.address if vendor.company else ''
+        form = VendorsChangeForm(instance=vendor,
+                                 initial={'company_name': company_name, 'company_address': company_address})
         return render(request, self.template_name, {
             'form': form,
         })
@@ -40,38 +43,6 @@ class VendorEditProfileView(LoginRequiredMixin, View):
             return redirect(reverse_lazy('vendors:profile'))
         else:
             return render(request, self.template_name, {'form': form})
-
-
-# class BestCompany(ListView):
-#     '''
-#     Based on sales
-#     '''
-#     model = Company
-#     template_name = 'company/companies_section.html'
-#     context_object_name = 'best_companies'
-#     paginate_by = 4
-#
-#     def get_queryset(self):
-#         best_companies = Company.get_best_company(limit=15)
-#         for index, company in enumerate(best_companies):
-#             company.rank = index + 1
-#         return best_companies
-#
-#
-# class BestCompanyRate(ListView):
-#     '''
-#     Based on Rate
-#     '''
-#     model = Company
-#     template_name = 'company/companies_section.html'
-#     context_object_name = 'best_companies_rate'
-#     paginate_by = 4
-#
-#     def get_queryset(self):
-#         best_companies_rate = Company.get_best_company_rate(limit=15)
-#         for index, company in enumerate(best_companies_rate):
-#             company.rank = index + 1
-#         return best_companies_rate
 
 
 class CompaniesView(View):
