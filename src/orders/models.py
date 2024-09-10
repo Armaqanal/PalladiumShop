@@ -40,7 +40,7 @@ class Order(DateFieldsMixin, models.Model):
 
 class OrderItem(DateFieldsMixin, models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
-    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, related_name='order_items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='order_items')
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
     price = models.PositiveIntegerField(default=0)
     discounted_price = models.PositiveIntegerField(default=0, blank=True)

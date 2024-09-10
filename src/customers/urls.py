@@ -13,6 +13,8 @@ urlpatterns = [
     path('address/', views.CustomerAddress.as_view(), name='customer-address'),
     path('address/<int:pk>/delete', views.CustomerDeleteAddressView.as_view(), name='delete_address'),
     path('address/<int:pk>/update', views.CustomerUpdateView.as_view(), name='update-address'),
+
+    path('send/email/', views.SendMessageCreateView.as_view(), name='customer-send-message')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

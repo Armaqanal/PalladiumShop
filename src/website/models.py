@@ -42,9 +42,9 @@ class Category(models.Model):
 
 
 class Discount(models.Model):
-    percent = models.PositiveBigIntegerField(null=True, blank=True,
+    percent = models.PositiveBigIntegerField(default=0, null=True, blank=True,
                                              verbose_name="درصد", help_text="چند درصد تخفیف؟")
-    amount = models.PositiveBigIntegerField(verbose_name="چقدر تخفیف؟")
+    amount = models.PositiveBigIntegerField(default=0, verbose_name="چقدر تخفیف؟")
     start_date = models.DateTimeField(default=timezone.now, null=True, blank=True,
                                       verbose_name="زمان شروع")
     end_date = models.DateTimeField(default=None, null=True, blank=True,
@@ -59,7 +59,7 @@ class Discount(models.Model):
         return True
 
     def clean(self):
-        if self.percent is not None and self.amount > 0:
+        if self.percent > 0 and self.amount > 0:
             raise ValueError("شما نمیتوانید هم درصدی هم مقداری تخفیف بزارید")
 
     def calculate_price(self, price: int) -> int:

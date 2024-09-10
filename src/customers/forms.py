@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from .models import Customer, Address
+from .models import Customer, Address, CustomerMessage
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
 
@@ -154,3 +154,21 @@ class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
         fields = ['street', 'city', 'state', 'zip_code']
+
+
+class CustomerMessageForm(forms.ModelForm):
+    class Meta:
+        model = CustomerMessage
+        fields = ['message']
+
+    def __init__(self, *args, **kwargs):
+        self.customer = kwargs.pop('customer', None)
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if self.customer:
+            instance.customer = self.customer
+        if commit:
+            instance.save()
+        return instance

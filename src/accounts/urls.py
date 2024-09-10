@@ -10,4 +10,5 @@ urlpatterns = [
     path('register/', views.PalladiumRegisterView.as_view(), name='register'),
 
     path('register/vendor/', views.PalladiumOwnerRegisterView.as_view(), name='register-vendor'),
+    path('register/staff/<int:company_id>/', views.PalladiumStaffRegistrationView.as_view(), name='register-staff'),
 ]

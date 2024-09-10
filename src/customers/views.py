@@ -1,10 +1,12 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import CreateView, TemplateView
 from django.views import generic, View
 from django.views.generic.edit import DeleteView, UpdateView
-from .models import Customer, Address
-from .forms import CustomerChangeForm, AddressForm
+from .models import Customer, Address, CustomerMessage
+from .forms import CustomerChangeForm, AddressForm, CustomerMessageForm
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 import os
@@ -101,3 +103,29 @@ class CustomerUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
 
+class SendMessageCreateView(CreateView):
+    model = CustomerMessageForm
+    template_name = 'website/pages/contact.html'
+    form_class = CustomerMessageForm
+    success_url = reverse_lazy('customers:customer-send-message')
+
+    def form_valid(self, form):
+        if self.request.user.customer:
+            message_instance = form.save()
+
+            send_mail(
+                subject='New Message from Customer',
+                message=message_instance.message,
+                from_email=self.request.user.email,
+                recipient_list=['armaqanalibabaei@gmail.com'],
+            )
+            messages.success(self.request, "ایمیل شما ارسال شد!")
+            return super().form_valid(form)
+        else:
+            messages.info(self.request,"فقط مشتری ها میتوانند پیام ارسال کنند.")
+            return redirect('customers:customer-send-message')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['customer'] = self.request.user.customer if hasattr(self.request.user, 'customer') else None
+        return kwargs

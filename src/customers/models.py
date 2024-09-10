@@ -151,6 +151,7 @@ def delete_customer_profile_photo(sender, instance: User, **kwargs):
         if os.path.isfile(instance.photo.path):
             os.remove(instance.photo.path)
 
+
 # logger = logging.getLogger(__name__)
 
 
@@ -161,3 +162,16 @@ def delete_customer_profile_photo(sender, instance: User, **kwargs):
 #         logger.info(f"New photo uploaded: {instance.photo.url}")
 #     elif instance.photo:
 #         logger.info(f"Photo updated: {instance.photo.url}")
+
+
+class CustomerMessage(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='messages')
+    message = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "پیام مشتری"
+        verbose_name_plural = "پیام های مشتری"
+
+    def __str__(self):
+        return f"پیام از طرف {self.customer.username} در تاریخ {self.created_at}"

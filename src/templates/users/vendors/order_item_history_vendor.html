@@ -123,29 +123,25 @@
                                         {% endif %}
                                     </div>
                                     <div class="list-group" id="list-tab" role="tablist">
-                                        <a class="list-group-item list-group-item-action custom-active"
-                                           id="list-home-list" href="{% url 'website:product-list' %}" role="tab"
-                                           aria-controls="list-home">
-                                            خانه
-                                            <img src="{% static 'website/images/icons/icons8-home-20.png' %}" alt="Icon"
-                                                 class="icon">
-                                        </a>
+
                                         <a class="list-group-item list-group-item-action" id="list-profile-list"
                                            href="{% url 'vendors:profile' %}" role="tab"
                                            aria-controls="list-profile">پروفایل
-                                            <img src="{% static 'website/images/icons/user.png' %}" alt="Icon"
+                                            <img src="{% static 'website/images/icons/icons8-user-25.png' %}" alt="Icon"
                                                  class="icon">
                                         </a>
                                         <a class="list-group-item list-group-item-action" id="list-messages-list"
                                            href="{% url 'orders:order_history_vendor' %}" role="tab"
                                            aria-controls="list-messages">سفارشات
-                                            <img src="{% static 'website/images/icons/order.png' %}" alt="Icon"
+                                            <img src="{% static 'website/images/icons/icons8-order-25.png' %}"
+                                                 alt="Icon"
                                                  class="icon">
                                         </a>
                                         <a class="list-group-item list-group-item-action" id="list-settings-list"
-                                           href="#list-settings" role="tab"
-                                           aria-controls="list-settings">نشانی شرکت
-                                            <img src="{% static 'website/images/icons/Address.png' %}" alt="Icon"
+                                           href="{% url 'vendors:company-list' %}" role="tab"
+                                           aria-controls="list-settings">مدیریت افراد
+                                            <img src="{% static 'website/images/icons/icons8-people-25.png' %}"
+                                                 alt="Icon"
                                                  class="icon">
                                         </a>
 
@@ -154,7 +150,8 @@
                                            data-bs-toggle="collapse" href="#product-collapse" role="button"
                                            aria-expanded="false" aria-controls="product-collapse">
                                             مدیریت محصول
-                                            <img src="{% static 'website/images/icons/logout.png' %}" alt="Icon"
+                                            <img src="{% static 'website/images/icons/icons8-products-24.png' %}"
+                                                 alt="Icon"
                                                  class="icon">
                                         </a>
                                         <div class="collapse" id="product-collapse">

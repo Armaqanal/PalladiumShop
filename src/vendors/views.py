@@ -1,13 +1,14 @@
 from django.core.paginator import Paginator
-from django.views.generic import TemplateView, DetailView, FormView
+from django.views.generic import TemplateView, DetailView, ListView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404
 
-from .forms import VendorsChangeForm
+from .forms import VendorsChangeForm, CompanyForm, VendorForm
 from .models import Vendor, Company
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.views import View
+from .permission_mixins import RoleBasedPermissionMixin
 
 
 class VendorProfileView(LoginRequiredMixin, TemplateView):
@@ -22,8 +23,10 @@ class VendorProfileView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class VendorEditProfileView(LoginRequiredMixin, View):
+class VendorEditProfileView(RoleBasedPermissionMixin, View):
     template_name = 'users/vendors/vendor_profile_edit.html'
+    allowed_roles = ['OWNER']
+    allow_view_only = ['OPERATOR']
 
     def get(self, request, *args, **kwargs):
         vendor = get_object_or_404(Vendor, id=request.user.id)
@@ -79,3 +82,34 @@ class CompaniesView(View):
         }
 
         return render(request, 'company/companies_section.html', context)
+
+
+class CompanyListView(LoginRequiredMixin, ListView):
+    model = Company
+    form_class = CompanyForm
+    template_name = 'users/vendors/company_detail.html'
+
+    def get_queryset(self):
+        return Company.objects.filter(vendors=self.request.user)
+
+
+class VendorsListView(RoleBasedPermissionMixin, ListView):
+    model = Vendor
+    form_class = VendorForm
+    template_name = 'users/vendors/vendor_list.html'
+    context_object_name = 'vendor_list'
+    allowed_roles = ['OWNER']
+    allow_view_only = ['OPERATOR', 'MANAGER']
+
+    def get_queryset(self):
+        company_id = self.kwargs.get('company_id')
+        company = get_object_or_404(Company, id=company_id)
+        return Vendor.objects.filter(company=company).exclude(role='OWNER')
+
+
+class VendorDeleteView(RoleBasedPermissionMixin, DeleteView):
+    model = Vendor
+    success_url = reverse_lazy('vendors:company-list')
+    template_name = 'users/vendors/vendor_list.html'
+    allowed_roles = ['OWNER']
+    allow_view_only = ['OPERATOR', 'MANAGER']

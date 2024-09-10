@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'jazzmin',
+    'django_elasticsearch_dsl',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -182,4 +183,15 @@ CACHES = {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
     }
+}
+
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = 'c7d5f56894f1ca'
+EMAIL_HOST_PASSWORD = '32c404e21bd288'
+EMAIL_PORT = '2525'
+
+# ElasticSearch
+
+ELASTICSEARCH_DSL = {
+    'default': {'hosts': 'http://localhost:9200'}
 }

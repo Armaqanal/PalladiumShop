@@ -1,3 +1,5 @@
+from django.shortcuts import get_object_or_404
+
 from .models import Vendor, Company
 from django import forms
 from django.core.exceptions import ValidationError
@@ -114,3 +116,53 @@ class VendorsChangeForm(forms.ModelForm):
             company.save()
             vendor.save()
         return vendor
+
+
+class StaffRegistrationView(UserCreationForm):
+    vendor_type = forms.ChoiceField(choices=[
+        (Vendor.Roles.MANAGER, "مدیر محصول"),
+        (Vendor.Roles.OPERATOR, "ناظر")
+    ], required=True, widget=forms.Select(attrs={'class': 'form-select form-control-lg'}))
+
+    class Meta:
+        model = Vendor
+        fields = ['username', 'email', 'phone', 'password1', 'password2', 'first_name', 'last_name', 'gender',
+                  'photo', 'date_of_birth', 'vendor_type']
+        widgets = {'date_of_birth': DateInput}
+
+    def __init__(self, *args, **kwargs):
+        self.company_id = kwargs.pop('company_id', None)
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            css_class = 'form-control form-control-ls' if field != 'gender' else 'form-select'
+            self.fields[field].widget.attrs.update({'class': css_class})
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        phone = self.cleaned_data.get('phone')
+        email = self.cleaned_data.get('email')
+        if not (username or phone or email):
+            raise ValidationError("Providing username, email, or phone number is required.", code='invalid')
+        return username
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.role = self.cleaned_data['vendor_type']
+        user.is_staff = True
+        if self.company_id:
+            user.company = get_object_or_404(Company, pk=self.company_id)
+        if commit:
+            user.save()
+        return user
+
+
+class CompanyForm(forms.ModelForm):
+    class Meta:
+        model = Company
+        fields = '__all__'
+
+
+class VendorForm(forms.ModelForm):
+    class Meta:
+        model = Vendor
+        fields = ['username', 'email', 'role']

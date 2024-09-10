@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.1
+    container_name: palladiumcontainer_elasticsearch
+    volumes:
+      - esdata01:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    networks:
+      - palladium_network
+
+volumes:
+  esdata01:
+
+networks:
+  palladium_network:
+    driver: bridge

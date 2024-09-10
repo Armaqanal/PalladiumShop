@@ -13,16 +13,18 @@ from website.models import Product
 from django.shortcuts import get_object_or_404
 
 from vendors.models import Vendor
-from vendors.forms import OwnerRegistrationForm
+from vendors.forms import OwnerRegistrationForm, StaffRegistrationView
 from django.contrib.auth.views import LoginView
 from django.http import JsonResponse
 from django.contrib.auth import login as auth_login
-import json
 from django.shortcuts import redirect
 from django.urls import reverse
 import re
 from django.core.cache import cache
 from kavenegar import *
+
+from vendors.models import Company
+from vendors.permission_mixins import RoleBasedPermissionMixin
 
 User = get_user_model()
 
@@ -171,3 +173,35 @@ class PalladiumLoginView(LoginView):
 
             return JsonResponse({'error': 'Invalid OTP'}, status=400)
         return JsonResponse({'error': 'Required fields missing'}, status=400)
+
+
+class PalladiumStaffRegistrationView(RoleBasedPermissionMixin, CreateView):
+    '''
+    Manager And Operator
+    '''
+    model = Vendor
+    form_class = StaffRegistrationView
+    template_name = 'users/vendors/staff_registration_form.html'
+    allowed_roles = ['OWNER']
+
+    def get_from_kwargs(self, **kwargs):
+        kwargs = super().get_form_kwargs()
+        kwargs['company_id'] = self.kwargs.get('company_id')
+        return kwargs
+
+    def form_valid(self, form):
+        company_id = self.kwargs.get('company_id')
+        company = get_object_or_404(Company, id=company_id)
+        staff = form.save(commit=False)
+        staff.company = company
+        staff.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('website:product-list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        company_id = self.kwargs.get('company_id')
+        context['company'] = get_object_or_404(Company, id=company_id)
+        return context

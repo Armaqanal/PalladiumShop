@@ -1,6 +1,4 @@
 import json
-
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.views import View
@@ -18,13 +16,15 @@ from website.models import Product, Comment, Category, ProductImage
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 from vendors.models import Company, Vendor
-from .forms import DiscountForm, ProductRatingForm
+from .forms import DiscountForm
 from django.contrib import messages
 
 from orders.models import Order
-import logging
 
 from .models import ProductRating
+from vendors.permission_mixins import RoleBasedPermissionMixin
+from .documents import ProductDocument
+from elasticsearch_dsl.query import MultiMatch
 
 
 class ProductListView(ListView):
@@ -38,9 +38,11 @@ class ProductListView(ListView):
         search = self.request.GET.get('search', '')
         category = self.request.GET.get('category', '')
         company = self.request.GET.get('company', '')
-
         if search:
-            products = products.filter(name__icontains=search) | products.filter(slug__icontains=search)
+            search_query = MultiMatch(query=search, fields=['name', 'description', 'slug'], fuzziness='AUTO')
+            search_product = ProductDocument.search().query(search_query)
+            product_ids = [hit.meta.id for hit in search_product]
+            products = Product.objects.filter(id__in=product_ids)
         if category:
             products = products.filter(category__name=category)
         if company:
@@ -106,11 +108,13 @@ class ProductDetailView(DetailView):
         return context
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(RoleBasedPermissionMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'products/product_create_view.html'
     extra_context = {'action_type': 'Adding'}
+    allowed_roles = ['OWNER', 'MANAGER']
+    allow_view_only = ['OPERATOR']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -154,11 +158,13 @@ class ProductCreateView(CreateView):
             return self.form_invalid(form)
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(RoleBasedPermissionMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'products/product_update.html'
     extra_context = {'action_type': 'Editing'}
+    allowed_roles = ['OWNER', 'MANAGER']
+    allow_view_only = ['OPERATOR']
 
     def get_queryset(self):
         vendor = self.request.user.vendor
@@ -200,23 +206,20 @@ class ProductUpdateView(UpdateView):
             return self.form_invalid(form)
 
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(RoleBasedPermissionMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('website:product-summary')
     template_name = 'products/product_table.html'
-
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        ProductImage.objects.filter(product=self.object).delete()
-        if self.object.discount:
-            self.object.discount.delete()
-        return super().delete(request, *args, **kwargs)
+    allowed_roles = ['OWNER', 'MANAGER']
+    allow_view_only = ['OPERATOR']
 
 
-class ProductSummaryListView(ListView):
+class ProductSummaryListView(RoleBasedPermissionMixin, ListView):
     model = Product
     template_name = 'products/product_table.html'
     context_object_name = 'products'
+    allowed_roles = ['OWNER', 'MANAGER']
+    allow_view_only = ['OPERATOR']
 
     def get_queryset(self):
         vendor = self.request.user.vendor

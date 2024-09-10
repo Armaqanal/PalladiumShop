@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block header %}
-    <!-- Include only the top bar from the header -->
+
     <div class="container-menu-desktop">
         <!-- Topbar -->
         <div class="top-bar">
@@ -22,13 +22,9 @@
                                style="font-family: Tahoma, sans-serif;">
                                 حساب من
                             </a>
-                        {% elif request.user.is_staff %}
-                            <a href="{% url 'vendors:profile' %}" class="flex-c-m trans-04 p-lr-25"
-                               style="font-family: Tahoma, sans-serif;">
-                                پنل فروشنده
-                            </a>
                         {% endif %}
                     {% endif %}
+
 
 
                     {% if request.user.is_authenticated %}
@@ -53,8 +49,8 @@
                                      src="{% static 'defualt/defualt.jpg' %}" alt="static"
                                      width="25">
                             {% endif %}
-                            {% if request.user.username %}
-                                {{ request.user.username }}
+                            {% if request.user.firstname %}
+                                {{ request.user.firstname }}
                             {% elif request.user.phone %}
                                 {{ request.user.phone }}
                             {% elif request.user.email %}
@@ -87,41 +83,55 @@
 <!-- end banner section -->
 
 {% block content %}
-
-    <br>
-    <br>
-    <br>
-
+    <br><br><br>
     <div class="container" style="font-family: Tahoma, sans-serif; text-align: right;">
         <div class="main-body mb-3">
             <div class="row gutters-sm">
-                <!-- Profile Card -->
-
-
-                <!-- Profile Details and Sidebar/Content Tabs -->
-                <div class="col-md-12"> <!-- Changed from col-md-8 to col-md-9 -->
+                <div class="col-md-12">
                     <div class="row">
-                        <!-- Profile Details -->
-                        <div class="col-md-7">
-                            <table id="orders-table" class="table table-bordered">
+
+                        <div class="col-md-8">
+                            <table class="table table-striped">
                                 <thead>
                                 <tr>
-                                    <th style="font-family: Tahoma, sans-serif; text-align: right;">شماره سفارش</th>
-                                    <th style="font-family: Tahoma, sans-serif; text-align: right;">قیمت کل</th>
-                                    <th style="font-family: Tahoma, sans-serif; text-align: right;">وضعیت سفارش</th>
-                                    <th style="font-family: Tahoma, sans-serif; text-align: right;">جزئیات سفارش</th>
-                                    <th style="font-family: Tahoma, sans-serif; text-align: right;">مشتری</th>
-                                    <th style="font-family: Tahoma, sans-serif; text-align: right;">آدرس</th>
-                                    <th style="font-family: Tahoma, sans-serif; text-align: right;">تغییر سفارش</th>
-                                    <!-- For the action button -->
+                                    <th scope="col" class="text-right">لوگو</th>
+                                    <th scope="col" class="text-right">نام شرکت</th>
+                                    <th scope="col" class="text-right">آدرس شرکت</th>
+
+                                    <th scope="col" class="text-right">مدیریت افراد</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <!-- AJAX will populate this area -->
+                                {% for company in company_list %}
+                                    <tr>
+                                        <td>
+                                            {% if company.logo %}
+                                                <img src="{{ company.logo.url }}" alt="Logo" width="50">
+                                            {% else %}
+                                                No Logo
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ company.name }}</td>
+                                        <td>{{ company.address }}</td>
+
+                                        <td>
+                                            <a href="{% url 'accounts:register-staff' company_id=company.id %}"
+                                               style="margin-right: 15px;">
+                                                <img src="{% static 'website/images/icons/edit.png' %}" alt="Edit"
+                                                     width="24" height="24">
+                                            </a>
+                                            <a href="{% url 'vendors:vendor-list' company_id=company.id %}">
+                                                <img src="{% static 'website/images/icons/research-center.png' %}"
+                                                     alt="Edit"
+                                                     width="24" height="24">
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                {% endfor %}
                                 </tbody>
                             </table>
                         </div>
-
 
                         <div class="col-md-4">
                             <div class="card" style="height: 100%">
@@ -180,130 +190,23 @@
                             </div>
                         </div>
 
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="updateStateModal" tabindex="-1" aria-labelledby="updateStateModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content" style="background-color: #ffffff;">
-                <div class="modal-header" style="background-color: #717fe0; color: white;">
-                    <h5 class="modal-title" id="updateStateModalLabel">Update Order State</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="updateStateForm">
-                        <div class="mb-3">
-                            <label for="newState" class="form-label">New State</label>
-                            <input type="text" class="form-control" id="newState" placeholder="Enter new state"
-                                   required>
-                        </div>
-                        <input type="hidden" id="orderId">
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="saveStateBtn" style="background-color: #717fe0;">
-                        Save changes
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <script src="{% static 'website/vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'website/vendor/bootstrap/js/popper.min.js' %}"></script>
+    <script src="{% static 'website/vendor/bootstrap/js/bootstrap.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
-    <br>
-    <br>
-
-    <br><br>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            function fetchOrders() {
-                $.ajax({
-                    url: '/api/v1/orders/',
-                    method: 'GET',
-                    success: function (data) {
-                        if (Array.isArray(data)) {
-                            const orders = data;
-                            let rows = '';
-                            orders.forEach(order => {
-                                let customerInfo = order.customer ? `${order.customer.email}` : 'N/A';
-                                let addressInfo = order.address ? `${order.address.street}` : 'N/A';
-                                let orderItemsLink = `<a href="/orders/order-item-list/vendor/${order.id}/">جزئیات سفارش</a>`;
-                                rows += `
-                            <tr>
-                                <td>${order.id}</td>
-                                <td>${order.total_cost}</td>
-                                <td>${order.state}</td>
-                                <td>${orderItemsLink}</td>
-                                <td>${customerInfo}</td>
-                                <td>${addressInfo}</td>
-                                <td><button class="update-state" data-id="${order.id}">PROGRESS-UNPAID-PAID</button></td>
-                            </tr>
-                        `;
-                            });
-                            $('#orders-table tbody').html(rows);
-                        } else {
-                            console.error('Unexpected data format:', data);
-                        }
-                    },
-                    error: function (error) {
-                        console.log('Error fetching orders:', error);
-                    }
-                });
-            }
-
-            fetchOrders();
-
-            $(document).on('click', '.update-state', function () {
-                const orderId = $(this).data('id');
-                const validState = ['PAID', 'PROGRESS', 'UNPAID']
-                let newState = '';
-
-                while (!validState.includes(newState)) {
-                    newState = prompt("Enter new state (PAID, PROGRESS, UNPAID):")
-                    if (newState === null) {
-                        return;
-                    }
-                    newState = newState.toUpperCase();
-                    if (!validState.includes(newState)) {
-                        alert("Invalid state. Please enter one of the following: PAID, PROGRESS, UNPAID.");
-                    }
-                }
-
-                if (newState) {
-                    $.ajax({
-                        url: `/api/v1/orders/${orderId}/`,
-                        method: 'PATCH',
-                        headers: {
-                            'X-CSRFToken': '{{ csrf_token }}'
-                        },
-                        contentType: 'application/json',
-                        data: JSON.stringify({state: newState}),
-                        success: function (data) {
-                            alert('Order state updated successfully!');
-                            fetchOrders();
-                        },
-                        error: function (error) {
-                            console.log('Error updating order state:', error);
-                        }
-                    });
-                }
-            });
-        });
-    </script>
-
-
-
 {% endblock content %}
+
+
+
+
+
+
+

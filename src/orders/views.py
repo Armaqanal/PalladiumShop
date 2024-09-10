@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404
 import json
 from django.db.models import Sum
 from django.contrib import messages
+from vendors.permission_mixins import RoleBasedPermissionMixin
 
 
 class AddToCartView(View):
@@ -210,9 +211,13 @@ class OrderItemDetailView(LoginRequiredMixin, DetailView):
         return context  # TODO Make it like OrderItemListViewVendor
 
 
-class OrderHistoryListViewVendor(LoginRequiredMixin, TemplateView):
+class OrderHistoryListViewVendor(RoleBasedPermissionMixin, TemplateView):
     template_name = 'users/vendors/order_history_vendor.html'
+    allowed_roles = ['OWNER', 'MANAGER']
+    allow_view_only = ['OPERATOR']
 
 
-class OrderItemListViewVendor(LoginRequiredMixin, TemplateView):
+class OrderItemListViewVendor(TemplateView):
     template_name = 'users/vendors/order_item_history_vendor.html'
+    allowed_roles = ['OWNER', 'MANAGER']
+    allow_view_only = ['OPERATOR']
